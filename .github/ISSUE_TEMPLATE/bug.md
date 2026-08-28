@@ -1,18 +1,26 @@
 ---
-name: Bug Report
-about: Laporkan error atau bug yang terjadi pada aplikasi
-title: '[BUG] '
-labels: 'bug'
-assignees: ''
+name: Bug
+about: Laporkan bug
+title: "fix: "
+labels: bug
 ---
 
-**Deskripsi Singkat Bug**
-Jelaskan bug secara ringkas.
+## Masalah
 
-**Langkah untuk Mereproduksi**
-1. Buka halaman...
-2. Klik tombol...
-3. Error muncul...
+## Langkah Reproduksi
 
-**Ekspektasi Perilaku**
-Seharusnya sistem bertindak seperti apa.
+1.
+2.
+3.
+
+## Expected
+
+## Actual
+
+## Environment
+
+- OS:
+- Browser:
+- Role user:
+
+## Catatan Tambahan

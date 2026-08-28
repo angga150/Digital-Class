@@ -1,13 +1,30 @@
-## Deskripsi Pull Request
-Jelaskan perubahan apa saja yang Anda lakukan pada PR ini.
+## Ringkasan
+
+<!-- Jelaskan perubahan secara singkat. -->
 
 ## Jenis Perubahan
-- [ ] Bug fix (perbaikan bug)
-- [ ] New feature (fitur baru)
-- [ ] Documentation (perubahan dokumentasi)
-- [ ] Refactor (perbaikan struktur kode)
 
-## Checklist Pengujian
-- [ ] Telah diuji secara lokal di browser
-- [ ] Tidak ada error di console / log Laravel
-- [ ] Sesuai dengan konvensi kode project
+- [ ] Feature
+- [ ] Bug fix
+- [ ] Refactor
+- [ ] Documentation
+- [ ] Chore
+
+## Checklist
+
+- [ ] Saya sudah membaca feature documentation terkait.
+- [ ] Input sudah divalidasi.
+- [ ] Permission/authorization sudah diperiksa.
+- [ ] Privacy/visibility sudah diperiksa.
+- [ ] Test relevan sudah dijalankan.
+- [ ] Manual test sudah dilakukan bila diperlukan.
+- [ ] Dokumentasi diperbarui jika ada perubahan behavior/decision.
+- [ ] Tidak ada secret atau `.env` yang ikut di-commit.
+
+## Catatan Testing
+
+<!-- Jelaskan command/test yang dijalankan. -->
+
+## Screenshot (jika perubahan UI)
+
+<!-- Opsional. -->

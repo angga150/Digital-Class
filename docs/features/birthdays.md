@@ -1,39 +1,53 @@
-# Feature Specification: Birthdays
+# Birthday System
 
-## 1. Status
-Active (MVP Scope)
+> **Status:** ✅ Spesifikasi final. Referensi produk: [`product/02-problem-solution-feature-mapping.md`](../02-problem-solution-feature-mapping.md) §B1.
 
-## 2. Tujuan
-Menampilkan daftar ulang tahun teman sekelas terdekat beserta hitung mundur (*countdown*) otomatis dan fitur pengiriman ucapan singkat agar suasana kelas lebih akrab dan sosial.
+Dokumen ini adalah spesifikasi kerja untuk feature **Birthday System**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
 
-## 3. User Flow
-1. Pengguna membuka halaman Beranda atau menu Birthdays.
-2. Sistem menampilkan daftar ulang tahun anggota kelas bulan ini.
-3. Kartu ulang tahun menampilkan sisa hari (hitung mundur) menuju hari H.
-4. Pengguna dapat memberikan ucapan selamat ulang tahun langsung pada kartu profil terkait.
+## Cara Membaca
 
-## 4. Business Rules
-- Tanggal lahir diambil dari data profil tabel `users`.
-- Hitung mundur dihitung otomatis berdasarkan tanggal hari ini terhadap tanggal ulang tahun di tahun berjalan.
-- Jika hari ulang tahun adalah hari ini, tampilkan lencana khusus ("🎉 Hari Ini!").
+Urutan praktis:
 
-## 5. Database & Model
-- Menggunakan kolom `birth_date` pada tabel `users`.
-- Model: `User.php`.
+1. Pahami tujuan dan user flow.
+2. Periksa business rules dan permission.
+3. Lihat data model.
+4. Implement backend + Livewire + UI.
+5. Tangani validation dan edge cases.
+6. Tambahkan test untuk logic kritikal.
+7. Update dokumentasi bila ada perubahan keputusan.
 
-## 6. Tugas Backend
-- Membuat query Eloquent untuk menyaring dan mengurutkan pengguna berdasarkan tanggal ulang tahun terdekat.
-- Menambahkan validasi input profil tanggal lahir.
+## User Flow
 
-## 7. Tugas Frontend
-- Membuat komponen Livewire `BirthdayCountdown`.
-- Mendesain kartu profil ulang tahun menggunakan Tailwind CSS dengan efek visual yang meriah (ikon kue/balon).
-- Menyiapkan *loading state* saat mengambil data.
+1. Saat mengisi profil, user mengisi `birth_date` (wajib tanggal+bulan, tahun opsional lewat toggle `birth_year_visible`).
+2. User memilih `birthday_visibility` (`public`/`class_only`/`private`).
+3. Dashboard & halaman "Birthday Calendar" menampilkan birthday terdekat sesuai visibility masing-masing user terhadap viewer.
+4. Pada hari H, sistem menandai user tersebut sebagai "berulang tahun hari ini" di dashboard — tanpa membuka detail tanggal lahir jika visibility-nya `private`.
 
-## 8. Permission & Security
-- Terbuka untuk seluruh `member` terautentikasi.
-- Pengguna hanya dapat mengubah tanggal lahir mereka sendiri melalui halaman pengaturan profil.
+## Data Model
 
-## 9. Testing
-- Memastikan perhitungan selisih hari ulang tahun akurat pada berbagai kondisi tanggal.
-- Memastikan tampilan responsif di perangkat mobile.
+Field ada di tabel `profiles` (lihat [`../04-database.md`](../04-database.md)): `birth_date`, `birth_year_visible`, `birthday_visibility`. Tidak ada tabel terpisah — birthday adalah atribut profil, bukan entitas sendiri.
+
+## API
+
+`GET /api/v1/birthdays/upcoming` — lihat [`../03-architecture.md`](../03-architecture.md).
+
+## Edge Case & Validasi
+
+- User tidak mengisi `birth_date` sama sekali → tidak muncul di widget birthday manapun, tidak error.
+- `birthday_visibility = private` → sistem tetap boleh menandai "hari ini ulang tahun X" (untuk keperluan sapaan sosial), tapi **tidak** menampilkan tanggal/tahun lahir eksak ke user lain.
+- Tahun kabisat (29 Februari) → tampilkan perayaan di 28 Februari pada tahun non-kabisat (aturan bisnis sederhana, dicatat di kode agar tidak ambigu).
+
+## Permission
+
+Setiap user hanya bisa mengubah `birth_date`/visibility miliknya sendiri (`ProfilePolicy@update`, lihat [`../03-architecture.md`](../03-architecture.md)). Class Admin tidak bisa mengubah birthday member lain.
+
+## Testing
+
+Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+
+## Related Documentation
+
+- [Product](../01-product.md)
+- [Development](../02-development.md)
+- [Architecture](../03-architecture.md)
+- [Database](../04-database.md)

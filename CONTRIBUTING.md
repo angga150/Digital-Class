@@ -1,67 +1,198 @@
 # Contributing Guide
 
-Panduan kontribusi khusus untuk tim internal Digital Class Universe. Repository ini bersifat private/team repository, sehingga kita menggunakan alur kerja kolaborasi sederhana yang efisien.
+Panduan ini dibuat untuk **tim internal** Digital Class Universe, bukan untuk workflow open-source.
 
-## 1. Persiapan Awal
+## 1. Sebelum Mulai
 
-Pastikan Anda sudah mengonfigurasi Git di komputer lokal:
-```bash
-git config --global user.name "Nama Anda"
-git config --global user.email "emailanda@example.com"
+Baca:
+
+1. [`README.md`](README.md)
+2. [`docs/02-development.md`](docs/02-development.md)
+3. Dokumentasi fitur yang sedang dikerjakan di [`docs/features/`](docs/features/)
+
+Jika task menyentuh database atau permission, baca bagian terkait di:
+
+- [`docs/04-database.md`](docs/04-database.md)
+- [`docs/03-architecture.md`](docs/03-architecture.md)
+
+## 2. Workflow Utama
+
+```text
+Ambil issue
+   ↓
+Baca feature documentation
+   ↓
+Buat branch
+   ↓
+Coding
+   ↓
+Test
+   ↓
+Update dokumentasi jika perlu
+   ↓
+Pull Request
+   ↓
+Review minimal 1 anggota
+   ↓
+Merge ke main
 ```
 
-## 2. Git Branching Strategy
+**Jangan push langsung ke `main`.**
 
-Jangan pernah melakukan *push* langsung ke branch `main`. Selalu gunakan branch terpisah untuk setiap task atau fitur yang Anda kerjakan.
+## 3. Branch
 
-- `main`: Branch utama untuk kode yang stabil dan siap rilis.
-- `feature/nama-fitur`: Branch untuk membuat fitur baru (contoh: `feature/birthday-countdown`).
-- `fix/nama-bug`: Branch untuk memperbaiki bug (contoh: `fix/poll-validation`).
+Gunakan format:
 
-## 3. Workflow Harian
+```text
+feature/<deskripsi>
+fix/<deskripsi>
+docs/<deskripsi>
+chore/<deskripsi>
+```
 
-1. Tarik perubahan terbaru dari branch `main`:
-   ```bash
-   git checkout main
-   git pull origin main
-   ```
-2. Buat branch baru sesuai task Anda:
-   ```bash
-   git checkout -b feature/nama-fitur
-   ```
-3. Lakukan coding di dalam folder `src/`.
-4. Periksa status perubahan:
-   ```bash
-   git status
-   ```
-5. Tambahkan file ke staging area:
-   ```bash
-   git add .
-   ```
-6. Lakukan commit dengan **Conventional Commits**:
-   ```bash
-   git commit -m "feat: add birthday countdown component"
-   ```
-   *Prefix yang didukung:*
-   - `feat:` untuk penambahan fitur baru
-   - `fix:` untuk perbaikan bug
-   - `docs:` untuk perubahan dokumentasi
-   - `refactor:` untuk merapikan kode tanpa mengubah fungsi
-   - `test:` untuk menambah/mengubah pengujian
-   - `chore:` untuk tugas pemeliharaan / konfigurasi
+Contoh:
 
-7. Dorong branch ke remote repository:
-   ```bash
-   git push origin feature/nama-fitur
-   ```
-8. Buka GitHub dan buat **Pull Request (PR)** dari branch Anda ke branch `main`.
-9. Minta rekan setim untuk melakukan *code review* sebelum di-*merge*.
+```bash
+git pull origin main
+git checkout -b feature/birthday-countdown
+```
 
-## 4. Perbedaan Peran (Backend vs Frontend)
+## 4. Commit
 
-Meskipun kita menggunakan Laravel + Livewire (monolitik), pembagian fokus tugas dapat dibagi secara fleksibel:
+Gunakan prefix sederhana:
 
-- **Backend Task:** Membuat migrasi database, Eloquent Model, relasi, validasi request, otorisasi (Policy), dan *query* Livewire logic.
-- **Frontend Task:** Menyusun struktur Blade template, komponen UI Livewire, *styling* Tailwind CSS, desain responsif (mobile-first), serta penanganan *loading*, *empty*, dan *error state*.
+```text
+feat: tambah birthday countdown
+fix: cegah double vote pada polling
+docs: update database documentation
+refactor: rapikan query dashboard
+test: tambah test polling
+chore: update dependency
+```
 
-Kolaborasikan keduanya dalam satu fitur yang utuh!
+## 5. Pull Request
+
+Setiap perubahan masuk melalui PR.
+
+Minimal:
+
+- Jelaskan apa yang berubah.
+- Jelaskan kenapa perubahan diperlukan.
+- Hubungkan issue jika ada.
+- Pastikan test relevan sudah dijalankan.
+- Pastikan permission dan visibility tidak rusak.
+- Update dokumentasi jika keputusan/flow berubah.
+- Minta review minimal satu anggota tim lain.
+
+## 6. Pembagian Backend dan Frontend
+
+### Backend
+
+Fokus utama:
+
+- migration
+- model dan relationship
+- business logic
+- validation
+- authorization / Policy
+- Livewire action
+- testing
+- database
+
+### Frontend
+
+Fokus utama:
+
+- Blade
+- Livewire UI
+- Tailwind CSS
+- responsive/mobile-first UI
+- form UI
+- loading state
+- empty state
+- error state
+
+Pembagian ini **tidak kaku**. Developer boleh mengerjakan end-to-end sebuah feature jika diperlukan.
+
+## 7. Standar Kode
+
+- Ikuti Laravel convention terlebih dahulu.
+- Gunakan Laravel Pint.
+- Nama class, method, variable, dan database identifier menggunakan Bahasa Inggris.
+- Komentar dan dokumentasi boleh Bahasa Indonesia.
+- Jangan membuat abstraction hanya supaya terlihat "enterprise".
+- Gunakan Model, Policy, Livewire, Blade, dan Service sederhana bila memang diperlukan.
+- Setiap feature harus tetap ter-scope dengan `class_id`.
+
+## 8. Cara Membuat Feature
+
+1. Baca `docs/features/<feature>.md`.
+2. Tentukan perubahan data.
+3. Buat/ubah migration.
+4. Buat/ubah Model dan relationship.
+5. Buat Policy/authorization jika diperlukan.
+6. Buat Livewire component.
+7. Implement business logic.
+8. Tambahkan validation.
+9. Buat UI Blade.
+10. Styling dengan Tailwind.
+11. Handle loading, empty, dan error state.
+12. Tambahkan test untuk logic kritikal.
+13. Test manual.
+14. Commit.
+15. Push branch.
+16. Buka Pull Request.
+
+Urutan ini adalah pola kerja, bukan aturan yang harus diikuti secara kaku pada setiap task.
+
+## 9. Definition of Done
+
+Task dianggap selesai jika:
+
+- [ ] User flow feature berjalan.
+- [ ] Business rules sudah ditangani.
+- [ ] Edge case penting sudah dipikirkan.
+- [ ] Permission/visibility benar.
+- [ ] Test kritikal tersedia jika relevan.
+- [ ] Dokumentasi terkait sudah diperbarui.
+- [ ] PR direview minimal satu anggota.
+- [ ] Tidak ada secret di repository.
+
+## 10. Sebelum PR: Security Checklist
+
+- [ ] Input sudah divalidasi di server.
+- [ ] Authorization sudah dicek.
+- [ ] File upload divalidasi.
+- [ ] Tidak ada secret di repository.
+- [ ] Data private tidak bocor melalui UI/query.
+- [ ] `class_id` scope tidak bisa dilewati dengan mengubah parameter/request.
+
+## 11. Jika Keputusan Berubah
+
+Jangan mengubah kode diam-diam jika perubahan menyentuh:
+
+- schema database,
+- permission matrix,
+- business rules,
+- scope MVP,
+- architecture.
+
+Ubah dokumentasi dan kode dalam PR yang sama. Jika perbedaan pendapat tidak selesai, gunakan issue berlabel `discussion` dan putuskan dalam waktu terbatas.
+
+## 12. Onboarding Anggota Baru
+
+Developer baru cukup mengikuti:
+
+```text
+README
+  ↓
+02-development
+  ↓
+03-architecture
+  ↓
+feature yang dikerjakan
+  ↓
+coding
+```
+
+Tidak perlu membaca seluruh repository sebelum mulai bekerja.

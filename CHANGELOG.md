@@ -1,12 +1,15 @@
 # Changelog
 
-Semua perubahan penting pada project Digital Class Universe akan dicatat di dokumen ini.
+## Unreleased
 
-Format didasarkan pada [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+### Documentation
 
-## [Unreleased]
-
-### Added
-- Inisialisasi struktur dokumentasi baru yang ramah pemula.
-- Pemindahan seluruh kode sumber Laravel ke dalam folder `src/`.
-- Penyusunan spesifikasi fitur inti (Dashboard, Birthdays, Events, Members, Posts, Polls, Gallery, Memories, Achievements, Time Capsules, Moderation).
+- Reorganisasi dokumentasi menjadi struktur yang lebih sederhana.
+- Product documentation digabung ke `docs/01-product.md`.
+- Development workflow, testing, security basics, dan Git workflow digabung ke `docs/02-development.md`.
+- Architecture, authentication, authorization, dan future API direction digabung ke `docs/03-architecture.md`.
+- Database menjadi `docs/04-database.md`.
+- Deployment dan storage menjadi `docs/05-deployment.md`.
+- Feature documentation dipindahkan ke `docs/features/`.
+- Source code Laravel ditetapkan berada di `src/`.
+- Menambahkan onboarding dan "Where Should I Edit?" untuk programmer pemula.

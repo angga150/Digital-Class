@@ -1,51 +1,124 @@
 # Digital Class Universe
 
-Platform ruang digital interaktif untuk mahasiswa kelas IT, dirancang untuk mempererat kebersamaan, menyimpan kenangan, dan mengelola aktivitas kelas dengan santai, fun, dan terstruktur.
+Website digital untuk kelas mahasiswa: tempat melihat informasi kelas, berinteraksi, menyimpan foto, dan mengabadikan kenangan bersama.
 
-## ✨ About
+> **Prinsip utama:** *Fun First, Useful Second, Memory Forever, Privacy First.*
 
-Digital Class Universe adalah project tugas kelompok mahasiswa IT yang dibangun bukan sebagai produk enterprise yang kaku, melainkan sebagai tempat berkumpul digital yang fungsional dan bermakna untuk seluruh anggota kelas. Project ini menyeimbangkan fitur sosial (seperti birthday countdown, class feed, galeri, dan polling) dengan fitur formal pendukung kebutuhan perkuliahan.
+## ✨ Tentang Project
 
-## 🚀 Features
+Digital Class Universe dibuat untuk menjadi "rumah digital" satu kelas. Project ini adalah project tugas kelompok mahasiswa, sehingga arsitekturnya sengaja dibuat sederhana, mudah dipelajari, dan tetap sehat untuk dikembangkan.
 
-- **Dashboard:** Ringkasan informasi kelas, aktivitas terbaru, dan widget penting.
-- **Birthdays:** Hitung mundur ulang tahun teman sekelas dan ucapan otomatis.
-- **Events:** Kalender kegiatan kelas, jadwal kuliah, dan pengingat tugas.
-- **Members:** Direktori profil mahasiswa lengkap dengan keahlian dan sosial media.
-- **Posts & Feed:** Berbagi cerita, pengumuman, dan diskusi santai.
-- **Polls:** Polling cepat untuk keputusan kelas atau sekadar seru-seruan.
-- **Gallery & Memories:** Arsip foto kegiatan dan momen berharga kelas.
-- **Achievements:** Papan penghargaan dan pencapaian akademik maupun non-akademik.
-- **Time Capsules:** Pesan rahasia yang terkunci dan dibuka di masa depan.
-- **Moderation:** Sistem laporan dan kontrol konten untuk menjaga kenyamanan bersama.
+MVP ditujukan untuk **satu kelas**, tetapi data dan kode tidak boleh dikunci secara hardcode ke satu kelas.
+
+## 🚀 Fitur MVP
+
+- Authentication dan membership kelas
+- Class Dashboard
+- Academic Corner minimal
+- Birthday System
+- Event Countdown
+- Member Profile
+- Social Feed
+- Polling / Voting
+- Class Gallery
+- Class Timeline
+- Achievement System
+- Moderation dan privacy control
+- In-app notification minimal
+
+Fitur P1/P2 seperti Confession, Class Finance, Time Capsule, Hall of Fame, On This Day, dan Random/Fun Features tidak menjadi fokus MVP.
 
 ## 🛠 Tech Stack
 
-- **Backend / Application Framework:** Laravel
-- **Frontend / Interactive UI:** Livewire
-- **Styling:** Tailwind CSS
-- **Database:** MySQL
-- **JavaScript Tambahan:** Alpine.js (hanya jika diperlukan)
+- **Laravel** — application/backend framework
+- **Livewire** — interactive UI
+- **Blade** — server-rendered views
+- **Tailwind CSS** — styling
+- **Alpine.js** — hanya jika interaksi kecil memang membutuhkannya
+- **MySQL** — database
+
+Arsitektur: **Monolithic Laravel Application dengan Livewire**.
+
+Tidak ada React, Vue, Inertia, SPA, microservices, Kubernetes, atau API-first architecture di MVP.
 
 ## 💻 Quick Start
 
-Baru bergabung ke project ini? Jangan khawatir! Silakan baca panduan lengkap di [docs/02-development.md](docs/02-development.md) untuk memulai setup environment dalam beberapa menit.
+> Source code Laravel berada di `src/`.
 
-## 📚 Documentation
+```bash
+git clone <URL-REPOSITORY>
+cd digital-class-universe
+cd src
 
-Dokumentasi project disusun secara progresif agar Anda hanya membaca yang dibutuhkan:
+composer install
+npm install
 
-- [Product Documentation](docs/01-product.md) - Visi, prinsip, target pengguna, dan MVP scope.
-- [Development Guide](docs/02-development.md) - Panduan setup, struktur folder `src/`, dan workflow harian.
-- [Architecture Overview](docs/03-architecture.md) - Penjelasan struktur monolitik Laravel + Livewire.
-- [Database Guide](docs/04-database.md) - Skema tabel, konvensi penamaan, dan relasi.
-- [Deployment Guide](docs/05-deployment.md) - Checklist rilis ke production.
-- [Feature Specs](docs/features/) - Spesifikasi detail per fitur.
+cp .env.example .env
+php artisan key:generate
+
+# Buat database MySQL lalu isi DB_* di .env
+php artisan migrate --seed
+
+# Terminal 1
+php artisan serve
+
+# Terminal 2
+npm run dev
+```
+
+Windows yang tidak memiliki `cp` dapat menyalin `.env.example` menjadi `.env` secara manual.
+
+Penjelasan setup lengkap dan troubleshooting ada di [`docs/02-development.md`](docs/02-development.md).
+
+## 📚 Dokumentasi
+
+| Dokumen | Untuk apa? |
+|---|---|
+| [`01-product.md`](docs/01-product.md) | Memahami produk, user, role, privacy, MVP, roadmap |
+| [`02-development.md`](docs/02-development.md) | Setup project dan workflow coding harian |
+| [`03-architecture.md`](docs/03-architecture.md) | Memahami cara aplikasi disusun |
+| [`04-database.md`](docs/04-database.md) | Memahami tabel, relasi, migration, dan aturan data |
+| [`05-deployment.md`](docs/05-deployment.md) | Menjalankan aplikasi di production |
+| [`features/`](docs/features/) | Spesifikasi masing-masing fitur |
+
+### Kalau mendapat task...
+
+Contoh: **"Kerjakan Birthday Countdown."**
+
+Cukup:
+
+```text
+README
+  ↓
+docs/02-development.md
+  ↓
+docs/features/birthdays.md
+  ↓
+coding → test → commit → PR
+```
+
+Tidak perlu membaca semua dokumentasi.
 
 ## 👥 Team
 
-Project ini dikembangkan secara kolaboratif oleh tim mahasisma jurusan IT.
+Repository bersifat **private/team repository**. Anggota tim yang sudah dikenal ditambahkan sebagai collaborator.
 
-## 📌 Project Status
+Cara bekerja bersama ada di [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-Saat ini berada dalam tahap **Active Development** (Fase MVP).
+## 📌 Status Project
+
+**MVP — dalam pengembangan.**
+
+Roadmap utama menggunakan empat status sederhana:
+
+- **Now** — sedang dikerjakan
+- **Next** — berikutnya
+- **Later** — setelah MVP
+- **Ideas** — eksperimen masa depan
+
+## Prinsip Dokumentasi
+
+> **Professional ≠ Complicated.**  
+> **Simple ≠ Unprofessional.**
+
+Dokumentasi ini dibuat supaya developer dapat menemukan jawaban dan tahu langkah berikutnya tanpa membaca puluhan file.

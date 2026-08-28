@@ -1,10 +1,16 @@
 ---
-name: Improvement / Refactor
-about: Usulan perbaikan kode atau peningkatan performa
-title: '[IMPROVEMENT] '
-labels: 'refactor'
-assignees: ''
+name: Improvement
+about: Perbaikan teknis atau UX
+title: "improve: "
+labels: improvement
 ---
 
-**Area yang Ditingkatkan**
-Jelaskan bagian kode atau UI yang perlu diperbaiki.
+## Masalah
+
+## Usulan Perbaikan
+
+## Dampak
+
+## Acceptance Criteria
+
+- [ ]

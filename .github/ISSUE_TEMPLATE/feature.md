@@ -1,13 +1,22 @@
 ---
-name: Feature Request
-about: Usulkan ide atau fitur baru untuk Digital Class Universe
-title: '[FEATURE] '
-labels: 'enhancement'
-assignees: ''
+name: Feature
+about: Usulan atau task feature
+title: "feature: "
+labels: feature
 ---
 
-**Deskripsi Fitur**
-Jelaskan fitur yang ingin diusulkan.
+## Tujuan
 
-**Tujuan / Manfaat**
-Mengapa fitur ini berguna untuk kelas?
+## User Flow
+
+## Business Rules
+
+## Permission
+
+## Data / Database
+
+## Acceptance Criteria
+
+- [ ]
+
+## Dokumentasi Terkait
