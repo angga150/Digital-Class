@@ -5,10 +5,18 @@ Format mengikuti [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Rewrite dokumentasi menyeluruh.** Struktur lama (`product/` 6 file + `docs/` 17 file + `docs/07-features/` 12 file = 35 dokumen) disederhanakan menjadi 5 dokumen utama (`docs/01-product.md` s.d. `05-deployment.md`) + `docs/features/` (spesifikasi per fitur). Tidak ada informasi yang dihapus — hanya digabung dan disusun ulang supaya lebih mudah diikuti programmer pemula. Lihat isi tiap dokumen baru untuk detail lengkap.
+- Struktur repository diubah: source code Laravel sekarang berada di `src/`, bukan di root repository.
+- Keputusan teknologi (Laravel + Livewire + Tailwind + MySQL) ditegaskan sebagai final — dokumentasi tidak lagi menampilkan opsi teknologi alternatif yang tidak dipakai.
+
 ### Added
-- Dokumentasi fase Product Design lengkap (`/product`): vision & principles, problem-solution-feature mapping, target user analysis, roles & permissions, privacy & moderation model, MVP scope & roadmap.
-- Dokumentasi fase Engineering Design lengkap (`/docs`): technical stack & architecture, database schema, API design, authentication & authorization, spesifikasi teknis 11 fitur P0, UI/UX foundation, design system, security, storage strategy, testing strategy, deployment strategy, git workflow, development workflow, team contribution guide, dan roadmap 4-milestone menuju MVP launch.
-- Repository foundation: README, CONTRIBUTING, .gitignore, .env.example, issue & PR templates.
+
+- Dokumentasi produk, development guide, architecture, database, dan deployment lengkap.
+- Spesifikasi teknis per fitur di `docs/features/`.
+- Template issue & Pull Request untuk tim internal.
 
 ### Pending
-- Implementasi kode (`backend/`, `frontend/`) — belum dimulai. Lihat `docs/16-roadmap.md` untuk urutan milestone.
+
+- Implementasi kode di `src/` — belum dimulai.
