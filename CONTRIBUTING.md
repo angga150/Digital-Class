@@ -1,198 +1,140 @@
-# Contributing Guide
+# Contributing
 
-Panduan ini dibuat untuk **tim internal** Digital Class Universe, bukan untuk workflow open-source.
+Panduan ini untuk anggota tim internal. Jadi dokumen ini tidak menjelaskan workflow open-source (fork, contributor asing, dll.) — cukup alur kerja tim kecil.
 
-## 1. Sebelum Mulai
+## Alur Kerja
 
-Baca:
-
-1. [`README.md`](README.md)
-2. [`docs/02-development.md`](docs/02-development.md)
-3. Dokumentasi fitur yang sedang dikerjakan di [`docs/features/`](docs/features/)
-
-Jika task menyentuh database atau permission, baca bagian terkait di:
-
-- [`docs/04-database.md`](docs/04-database.md)
-- [`docs/03-architecture.md`](docs/03-architecture.md)
-
-## 2. Workflow Utama
-
-```text
-Ambil issue
-   ↓
-Baca feature documentation
-   ↓
-Buat branch
-   ↓
-Coding
-   ↓
-Test
-   ↓
-Update dokumentasi jika perlu
-   ↓
+```
+Repository
+  ↓
+Anggota tim diundang sebagai collaborator
+  ↓
+Tiap orang kerja di branch masing-masing
+  ↓
+Push branch
+  ↓
 Pull Request
-   ↓
-Review minimal 1 anggota
-   ↓
-Merge ke main
+  ↓
+Review oleh anggota tim lain
+  ↓
+Merge ke master
 ```
 
-**Jangan push langsung ke `main`.**
+**Jangan push langsung ke `master`.** Semua perubahan lewat Pull Request, meski perubahannya kecil — supaya ada jejak review dan tidak ada yang tidak sengaja merusak kode orang lain.
 
-## 3. Branch
-
-Gunakan format:
-
-```text
-feature/<deskripsi>
-fix/<deskripsi>
-docs/<deskripsi>
-chore/<deskripsi>
-```
-
-Contoh:
+## Langkah Konkret
 
 ```bash
-git pull origin main
+git pull origin master
 git checkout -b feature/birthday-countdown
+
+# ...coding...
+
+git add .
+git commit -m "feat: tambah countdown ulang tahun di dashboard"
+git push origin feature/birthday-countdown
 ```
 
-## 4. Commit
+Setelah push, buka Pull Request di GitHub, minta review minimal 1 anggota tim lain, merge setelah disetujui.
 
-Gunakan prefix sederhana:
+## Kalau Satu Fitur Dikerjakan 2 Orang (Backend & Frontend) di Branch yang Sama
 
-```text
-feat: tambah birthday countdown
-fix: cegah double vote pada polling
-docs: update database documentation
-refactor: rapikan query dashboard
-test: tambah test polling
-chore: update dependency
+Karena stack kita Laravel + Livewire, satu fitur biasanya melewati backend dan frontend sekaligus dalam satu alur (lihat [`docs/03-architecture.md`](./docs/03-architecture.md) §4) — jadi wajar kalau dua orang kerja di **branch yang sama**, bukan branch backend/frontend terpisah.
+
+**Yang perlu dipahami: nama branch yang sama di dua komputer BUKAN otomatis satu kesatuan kerja.** Git tidak tahu maksud kalian — yang dia tahu cuma histori commit. Kalau dua orang bikin branch dengan nama sama secara terpisah tanpa saling `pull` dulu, push salah satu akan **ditolak**, atau kalau dipaksa (`--force`) bisa **menimpa dan menghilangkan kerjaan satu sama lain**.
+
+### Cara yang Benar: Satu Orang Mulai Duluan, yang Lain Menyusul di Branch yang Sama
+
+```bash
+# Orang pertama (mulai duluan, misal bagian backend)
+git checkout master
+git pull origin master
+git checkout -b feature/birthday-countdown
+
+# ...kerja migration, model, Livewire logic...
+git add .
+git commit -m "feat: birthday model & Livewire logic"
+git push origin feature/birthday-countdown
+# branch ini sekarang resmi ada di GitHub (remote)
 ```
 
-## 5. Pull Request
+```bash
+# Orang kedua (menyusul, misal bagian frontend)
+git checkout master
+git pull origin master
+git fetch origin
+git checkout feature/birthday-countdown
+# PENTING: tanpa -b, karena branch-nya SUDAH ADA di remote, bukan bikin baru
+git pull origin feature/birthday-countdown
+# pastikan dapat commit terbaru dari orang pertama sebelum mulai kerja
 
-Setiap perubahan masuk melalui PR.
-
-Minimal:
-
-- Jelaskan apa yang berubah.
-- Jelaskan kenapa perubahan diperlukan.
-- Hubungkan issue jika ada.
-- Pastikan test relevan sudah dijalankan.
-- Pastikan permission dan visibility tidak rusak.
-- Update dokumentasi jika keputusan/flow berubah.
-- Minta review minimal satu anggota tim lain.
-
-## 6. Pembagian Backend dan Frontend
-
-### Backend
-
-Fokus utama:
-
-- migration
-- model dan relationship
-- business logic
-- validation
-- authorization / Policy
-- Livewire action
-- testing
-- database
-
-### Frontend
-
-Fokus utama:
-
-- Blade
-- Livewire UI
-- Tailwind CSS
-- responsive/mobile-first UI
-- form UI
-- loading state
-- empty state
-- error state
-
-Pembagian ini **tidak kaku**. Developer boleh mengerjakan end-to-end sebuah feature jika diperlukan.
-
-## 7. Standar Kode
-
-- Ikuti Laravel convention terlebih dahulu.
-- Gunakan Laravel Pint.
-- Nama class, method, variable, dan database identifier menggunakan Bahasa Inggris.
-- Komentar dan dokumentasi boleh Bahasa Indonesia.
-- Jangan membuat abstraction hanya supaya terlihat "enterprise".
-- Gunakan Model, Policy, Livewire, Blade, dan Service sederhana bila memang diperlukan.
-- Setiap feature harus tetap ter-scope dengan `class_id`.
-
-## 8. Cara Membuat Feature
-
-1. Baca `docs/features/<feature>.md`.
-2. Tentukan perubahan data.
-3. Buat/ubah migration.
-4. Buat/ubah Model dan relationship.
-5. Buat Policy/authorization jika diperlukan.
-6. Buat Livewire component.
-7. Implement business logic.
-8. Tambahkan validation.
-9. Buat UI Blade.
-10. Styling dengan Tailwind.
-11. Handle loading, empty, dan error state.
-12. Tambahkan test untuk logic kritikal.
-13. Test manual.
-14. Commit.
-15. Push branch.
-16. Buka Pull Request.
-
-Urutan ini adalah pola kerja, bukan aturan yang harus diikuti secara kaku pada setiap task.
-
-## 9. Definition of Done
-
-Task dianggap selesai jika:
-
-- [ ] User flow feature berjalan.
-- [ ] Business rules sudah ditangani.
-- [ ] Edge case penting sudah dipikirkan.
-- [ ] Permission/visibility benar.
-- [ ] Test kritikal tersedia jika relevan.
-- [ ] Dokumentasi terkait sudah diperbarui.
-- [ ] PR direview minimal satu anggota.
-- [ ] Tidak ada secret di repository.
-
-## 10. Sebelum PR: Security Checklist
-
-- [ ] Input sudah divalidasi di server.
-- [ ] Authorization sudah dicek.
-- [ ] File upload divalidasi.
-- [ ] Tidak ada secret di repository.
-- [ ] Data private tidak bocor melalui UI/query.
-- [ ] `class_id` scope tidak bisa dilewati dengan mengubah parameter/request.
-
-## 11. Jika Keputusan Berubah
-
-Jangan mengubah kode diam-diam jika perubahan menyentuh:
-
-- schema database,
-- permission matrix,
-- business rules,
-- scope MVP,
-- architecture.
-
-Ubah dokumentasi dan kode dalam PR yang sama. Jika perbedaan pendapat tidak selesai, gunakan issue berlabel `discussion` dan putuskan dalam waktu terbatas.
-
-## 12. Onboarding Anggota Baru
-
-Developer baru cukup mengikuti:
-
-```text
-README
-  ↓
-02-development
-  ↓
-03-architecture
-  ↓
-feature yang dikerjakan
-  ↓
-coding
+# ...kerja Blade, styling...
+git add .
+git commit -m "feat: birthday countdown UI"
+git push origin feature/birthday-countdown
 ```
 
-Tidak perlu membaca seluruh repository sebelum mulai bekerja.
+**Kunci utamanya:** `git checkout <nama-branch>` (tanpa `-b`) untuk mengambil branch yang sudah ada, bukan `git checkout -b <nama-branch>` yang bikin baru. Kalau branch belum ada di remote, Git akan kasih error jelas — itu tandanya kamu perlu koordinasi dulu sebelum lanjut, bukan asal jalan bikin branch sendiri.
+
+### Kalau Terlanjur Dua Orang Bikin Branch Sama Tanpa Saling Tahu
+
+Push kedua akan ditolak dengan pesan semacam `rejected — non-fast-forward`. Solusinya, orang kedua tarik dulu perubahan dari remote sebelum push:
+
+```bash
+git pull origin feature/birthday-countdown --rebase
+git push origin feature/birthday-countdown
+```
+
+Kalau kalian berdua kebetulan mengubah file yang sama persis di baris yang sama, baru muncul **merge conflict** sungguhan — Git akan menandai bagian yang bentrok di file terkait, tinggal dipilih/digabung manual isinya, lalu commit ulang. Kalau kalian kerja di file berbeda (misal satu di `app/Livewire/Birthday.php`, satu di `resources/views/livewire/birthday.blade.php`), biasanya otomatis tergabung tanpa konflik.
+
+### Supaya Situasi Ini Jarang Terjadi
+
+Sebelum mulai kerja fitur yang bakal dikerjakan 2 orang, kabari dulu di grup tim ("aku mulai kerjain birthday countdown bagian backend ya, nanti nyusul siapa buat UI-nya?") — bukan aturan Git tambahan, cukup kebiasaan komunikasi singkat sebelum bikin branch.
+
+## Konvensi Penamaan Branch
+
+`<type>/<deskripsi-singkat>` — contoh: `feature/birthday-countdown`, `fix/poll-double-vote`, `docs/update-database`.
+
+## Konvensi Commit
+
+Pakai prefix sederhana di awal commit message:
+
+| Prefix      | Kapan dipakai                        |
+| ----------- | ------------------------------------ |
+| `feat:`     | Fitur baru                           |
+| `fix:`      | Perbaikan bug                        |
+| `docs:`     | Perubahan dokumentasi saja           |
+| `refactor:` | Rapikan kode tanpa mengubah perilaku |
+| `test:`     | Menambah/mengubah test               |
+| `chore:`    | Setup, dependency, config            |
+
+Contoh: `feat: tambah widget birthday di dashboard`, `fix: cegah user vote dua kali di polling`
+
+Tidak perlu aturan Git yang lebih rumit dari ini — cukup konsisten.
+
+## Pembagian Fokus Backend & Frontend
+
+Karena stack kita Laravel + Livewire, satu fitur biasanya melewati backend dan frontend sekaligus (lihat [`docs/03-architecture.md`](./docs/03-architecture.md) §4). Pembagian di bawah ini adalah **panduan fokus**, bukan aturan kaku — kamu boleh dan wajar mengerjakan keduanya untuk fitur yang tidak terlalu besar.
+
+**Task condong backend:**
+migration → model → relationship → validation → authorization → Livewire logic → test
+
+**Task condong frontend:**
+Blade → Livewire UI → Tailwind → responsive → loading/error/empty state
+
+## Sebelum Membuka Pull Request
+
+```
+[ ] Kode sudah dicoba jalan di lokal
+[ ] Sudah dicek manual dengan minimal 2 role berbeda (misal Member & Class Admin) kalau fitur ini punya aturan permission
+[ ] Dokumentasi terkait (docs/features/... atau lainnya) sudah diupdate kalau ada perubahan perilaku/struktur
+[ ] Checklist security di docs/03-architecture.md §7 sudah dicek
+```
+
+## Cara Mengerjakan Fitur
+
+Urutan lengkap ada di [`docs/02-development.md`](./docs/02-development.md) §9 "How to Create a Feature" — mulai dari baca dokumentasi fitur sampai buka Pull Request.
+
+## Kalau Ada Perbedaan Pendapat Teknis
+
+Diskusikan di issue (bukan di komentar PR yang mudah tenggelam), putuskan bersama tim. Kalau perubahan menyangkut struktur database atau keputusan yang sudah tertulis di dokumentasi, update juga dokumentasinya dalam PR yang sama — jangan biarkan dokumentasi jadi usang.

@@ -1,53 +1,64 @@
-# Moderation System
+# Moderation
 
-> **Status:** ✅ Spesifikasi final. Referensi produk: [`product/05-privacy-and-moderation.md`](../05-privacy-and-moderation.md) — ini adalah fondasi P0, bukan fitur tambahan.
+## Status
 
-Dokumen ini adalah spesifikasi kerja untuk feature **Moderation System**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
+Planned — **fondasi wajib**, harus jalan bersamaan dengan Social Feed, bukan menyusul setelahnya.
 
-## Cara Membaca
+## Tujuan
 
-Urutan praktis:
-
-1. Pahami tujuan dan user flow.
-2. Periksa business rules dan permission.
-3. Lihat data model.
-4. Implement backend + Livewire + UI.
-5. Tangani validation dan edge cases.
-6. Tambahkan test untuk logic kritikal.
-7. Update dokumentasi bila ada perubahan keputusan.
+Menjaga konten kelas tetap aman tanpa mematikan spontanitas Community Owned — lewat mekanisme report yang reaktif (bukan approval yang menghambat semua orang di depan).
 
 ## User Flow
 
-1. Member melihat konten bermasalah → klik "Report", isi alasan singkat.
-2. Report masuk ke `moderation queue` yang hanya terlihat oleh Moderator/Class Admin/Super Admin.
-3. Moderator meninjau: `dismiss` (tidak melanggar) atau `hide`/`delete` konten (melanggar).
-4. Setiap aksi moderasi dicatat di `audit_logs` — siapa, aksi apa, kapan.
+```
+Member lihat konten bermasalah → klik Report, isi alasan singkat
+  ↓
+Report masuk ke moderation queue (hanya terlihat Moderator ke atas)
+  ↓
+Moderator tinjau: dismiss (tidak melanggar) atau hide/hapus (melanggar)
+  ↓
+Setiap aksi tercatat di audit log
+```
 
-## Data Model
+## Business Rules
 
-Tabel `reports` (polymorphic, target: posts/comments/gallery_media/timeline_entries/profiles) dan `audit_logs` — lihat [`../04-database.md`](../04-database.md).
+- Konten yang bisa dilaporkan: post, comment, foto gallery, entri timeline, profil.
+- Konten yang di-hide **tidak langsung hilang permanen** — bisa direview ulang/di-restore oleh Class Admin/Super Admin.
+- **Identitas reporter hanya terlihat oleh Moderator ke atas** — Member biasa tidak tahu siapa yang melaporkan, untuk mencegah balas dendam sosial.
+- Report ganda pada konten yang sama ditampilkan teragregasi ("3 laporan"), bukan numpuk sebagai entri terpisah di antrean.
+- Setiap aksi moderasi (approve/reject/hide) **wajib** tercatat di audit log — siapa, aksi apa, kapan.
 
-## API
+## Database
 
-`POST /api/v1/reports` — lihat [`../03-architecture.md`](../03-architecture.md). Endpoint queue moderasi (`GET /api/v1/moderation/queue`) belum didetailkan di `../03-architecture.md` karena di MVP moderasi dilakukan lewat halaman web (Livewire), API-nya ditambahkan belakangan jika dibutuhkan (mis. untuk mobile admin).
+Tabel `reports` (polymorphic — target: posts/comments/gallery_media/timeline_entries/profiles), `audit_logs`. Lihat [`../04-database.md`](../04-database.md).
 
-## Edge Case & Validasi
+## Backend
 
-- Report ganda pada konten yang sama oleh user yang sama → diperbolehkan tercatat lebih dari satu (tidak di-unique-kan), tapi ditampilkan sebagai satu entri teragregasi ("3 laporan") di UI moderator agar tidak membanjiri antrean.
-- Konten yang di-hide masih bisa direview ulang (di-restore) oleh Class Admin/Super Admin — tidak permanen kecuali eksplisit dihapus.
-- Report terhadap `profiles` (bukan hanya konten) — memungkinkan pelaporan perilaku, bukan cuma konten; ditangani lewat mekanisme sama (polymorphic).
+- `{Model}Policy@moderate` — dicek untuk role Moderator, Class Admin, Super Admin.
+- Setiap aksi moderasi menulis satu baris ke `audit_logs`.
+
+## Frontend
+
+- Halaman moderation queue (hanya bisa diakses Moderator ke atas)
+- Tombol "Report" kecil tapi mudah ditemukan di tiap konten (post, comment, foto, entri timeline)
 
 ## Permission
 
-Report: semua role login. Review queue & aksi moderasi: Moderator, Class Admin, Super Admin (`{Model}Policy@moderate`, lihat [`../03-architecture.md`](../03-architecture.md)). Member biasa tidak bisa melihat siapa yang melaporkan (identitas reporter hanya terlihat oleh Moderator ke atas, untuk mencegah balas dendam sosial).
+Report: semua role login. Review queue & aksi moderasi: Moderator, Class Admin, Super Admin. Member biasa **tidak bisa** melihat siapa pelapor.
+
+## Validation
+
+- Report wajib punya alasan (`reason`), tidak boleh kosong
+
+## Edge Cases
+
+- Konten yang sudah di-hide dilaporkan lagi → tetap masuk antrean (barangkali perlu ditinjau ulang keputusannya)
+- Report terhadap profil (bukan konten) → memungkinkan pelaporan perilaku user, bukan cuma konten — ditangani lewat mekanisme polymorphic yang sama
 
 ## Testing
 
-Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+**Wajib ditest**: Member biasa tidak bisa mengakses moderation queue lewat manipulasi URL/request langsung, dan identitas reporter tidak bocor ke Member biasa lewat endpoint manapun.
 
-## Related Documentation
+## Related Features
 
-- [Product](../01-product.md)
-- [Development](../02-development.md)
-- [Architecture](../03-architecture.md)
-- [Database](../04-database.md)
+Social Feed, Class Gallery, Class Timeline, Member Profile — semua fitur user-generated content bergantung pada fondasi ini.

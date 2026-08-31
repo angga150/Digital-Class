@@ -1,55 +1,68 @@
 # Social Feed (Posts)
 
-> **Status:** ✅ Spesifikasi final. Referensi produk: [`product/02-problem-solution-feature-mapping.md`](../02-problem-solution-feature-mapping.md) §B3.
+## Status
 
-Dokumen ini adalah spesifikasi kerja untuk feature **Social Feed (Posts)**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
+Planned (belum diimplementasi)
 
-## Cara Membaca
+## Tujuan
 
-Urutan praktis:
-
-1. Pahami tujuan dan user flow.
-2. Periksa business rules dan permission.
-3. Lihat data model.
-4. Implement backend + Livewire + UI.
-5. Tangani validation dan edge cases.
-6. Tambahkan test untuk logic kritikal.
-7. Update dokumentasi bila ada perubahan keputusan.
+Ruang ekspresi santai untuk anggota kelas — versi ringan dari media sosial, bukan Facebook/Instagram penuh.
 
 ## User Flow
 
-1. Member membuat post (`text`/`image`/`memory`), memilih visibility.
-2. Post muncul di feed, urut terbaru, dengan infinite scroll (bukan pagination angka — lebih natural untuk feed).
-3. User lain bisa react (like) dan comment.
-4. User bisa report post yang dianggap melanggar (masuk `reports`, lihat [`05-privacy-and-moderation.md`](../05-privacy-and-moderation.md)).
-5. Author bisa menghapus post sendiri (soft delete).
+```
+Member buat post (text/gambar/memory), pilih visibility
+  ↓
+Post muncul di feed, urut terbaru, infinite scroll
+  ↓
+User lain react (like) dan comment
+  ↓
+User bisa report post yang bermasalah
+  ↓
+Author bisa hapus post sendiri (soft delete)
+```
 
-## Data Model
+## Business Rules
 
-Tabel `posts`, `comments` (polymorphic), `reactions` (polymorphic), `reports` (polymorphic) — lihat [`../04-database.md`](../04-database.md).
+- Post tidak butuh approval sebelum tayang — moderasi bersifat **reaktif** (lewat report), bukan **preventif** (approval dulu), supaya tidak menghambat spontanitas (prinsip Community Owned).
+- Post kosong (tanpa teks & tanpa media) tidak boleh dibuat.
+- Satu user hanya bisa react sekali ke post yang sama (dicegah lewat database constraint, bukan cuma validasi tampilan).
 
-## API
+## Database
 
-`GET/POST/DELETE /api/v1/posts`, `/posts/{id}/comments`, `/posts/{id}/reactions`, `/api/v1/reports` — lihat [`../03-architecture.md`](../03-architecture.md).
+Tabel `posts`, `comments` (polymorphic), `reactions` (polymorphic), `reports` (polymorphic). Lihat [`../04-database.md`](../04-database.md).
 
-## Edge Case & Validasi
+## Backend
 
-- Post kosong (tanpa body & tanpa media) → ditolak validasi.
-- Reaction ganda oleh user yang sama → dicegah oleh unique constraint di `reactions` (lihat `../04-database.md`), bukan hanya validasi frontend.
-- Post yang di-soft-delete tetap muncul di `audit_logs` jika sebelumnya sempat di-report, untuk keperluan moderasi.
-- Comment di post yang sudah dihapus → tidak bisa ditambah komentar baru, tapi komentar lama tetap terlihat di riwayat moderasi (bukan user-facing).
+- `PostPolicy@create` — semua role login berstatus `active` boleh buat post.
+- `PostPolicy@delete` — author sendiri, atau Moderator/Class Admin (moderasi).
+- Reaction dicegah dobel lewat unique constraint database (`reactable_id`, `reactable_type`, `user_id`, `type`).
+
+## Frontend
+
+- Feed dengan infinite scroll (bukan pagination angka — lebih natural untuk feed)
+- Form buat post (modal atau area di atas feed)
+- Tombol react & comment di tiap post
+- Tombol report (ikon kecil, tidak mencolok tapi mudah ditemukan)
 
 ## Permission
 
-Create: semua role login berstatus `active` (`PostPolicy@create`). Delete: hanya author sendiri atau Moderator/Class Admin (`PostPolicy@delete` vs `@moderate`, lihat [`../03-architecture.md`](../03-architecture.md)).
+Create: semua role login berstatus `active`. Delete: author sendiri atau Moderator/Class Admin. Report: semua role login.
+
+## Validation
+
+- Post harus punya `body` atau `media_path` (tidak boleh dua-duanya kosong)
+- Upload gambar mengikuti aturan file upload di [`../03-architecture.md`](../03-architecture.md) §7
+
+## Edge Cases
+
+- Post yang di-soft-delete tetap tercatat di `audit_logs` kalau sebelumnya pernah di-report — untuk keperluan moderasi
+- Comment di post yang sudah dihapus → tidak bisa ditambah komentar baru
 
 ## Testing
 
-Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+**Wajib ditest**: reaction tidak bisa dobel oleh user yang sama, dan hanya author/moderator yang bisa hapus post orang lain.
 
-## Related Documentation
+## Related Features
 
-- [Product](../01-product.md)
-- [Development](../02-development.md)
-- [Architecture](../03-architecture.md)
-- [Database](../04-database.md)
+Dashboard (aktivitas terbaru), Moderation, Member Profile

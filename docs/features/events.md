@@ -1,53 +1,68 @@
 # Event Countdown
 
-> **Status:** ✅ Spesifikasi final. Referensi produk: [`product/02-problem-solution-feature-mapping.md`](../02-problem-solution-feature-mapping.md) §A2.
+## Status
 
-Dokumen ini adalah spesifikasi kerja untuk feature **Event Countdown**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
+Planned (belum diimplementasi)
 
-## Cara Membaca
+## Tujuan
 
-Urutan praktis:
-
-1. Pahami tujuan dan user flow.
-2. Periksa business rules dan permission.
-3. Lihat data model.
-4. Implement backend + Livewire + UI.
-5. Tangani validation dan edge cases.
-6. Tambahkan test untuk logic kritikal.
-7. Update dokumentasi bila ada perubahan keputusan.
+Supaya event penting (UTS, UAS, wisuda, acara kelas) tidak lagi hilang ditelan chat grup — semua tercatat di satu tempat dengan countdown yang jelas.
 
 ## User Flow
 
-1. Class Admin membuat event (judul, deskripsi, tanggal+waktu, lokasi, gambar opsional).
-2. Event muncul di dashboard sebagai countdown ("Wisuda: 438 hari lagi") dan di halaman daftar event.
-3. Member bisa melihat detail event, tidak bisa mengedit.
-4. Saat tanggal event lewat, status otomatis berubah ke `completed` (job terjadwal harian, bukan realtime).
+```
+Class Admin membuat event
+  ↓
+Isi judul, deskripsi, tanggal+waktu, lokasi, gambar (opsional)
+  ↓
+Event muncul di Dashboard (countdown) & halaman daftar Event
+  ↓
+Member lihat detail, tidak bisa edit
+  ↓
+Tanggal event lewat → status otomatis jadi "completed"
+```
 
-## Data Model
+## Business Rules
 
-Tabel `events` — lihat [`../04-database.md`](../04-database.md). Kolom `starts_at` disimpan UTC, dikonversi ke timezone lokal (WIB/WITA/WIT sesuai kebutuhan) di layer presentasi Blade — bukan disimpan per-timezone di database.
+- Hanya Class Admin (dan Super Admin) yang bisa membuat/edit/hapus event.
+- Tanggal & waktu disimpan dalam UTC, dikonversi ke waktu lokal saat ditampilkan.
+- Countdown menampilkan hitungan **hari** untuk event yang masih >7 hari lagi, dan **jam:menit** untuk event <24 jam — supaya tidak berisik menampilkan detik/menit untuk event yang masih jauh.
+- Status event: `upcoming` → `ongoing` → `completed`, atau `cancelled`.
 
-## API
+## Database
 
-`GET/POST/PATCH/DELETE /api/v1/events` — lihat [`../03-architecture.md`](../03-architecture.md).
+Tabel `events` — lihat [`../04-database.md`](../04-database.md).
 
-## Edge Case & Validasi
+## Backend
 
-- `starts_at` di masa lalu saat pembuatan → tolak dengan validasi, kecuali admin eksplisit membuat entri retroaktif (flag terpisah, tidak masuk MVP).
-- Event tanpa lokasi (online/TBA) → field `location` nullable, tampilkan "Lokasi menyusul" bukan string kosong.
-- Countdown menampilkan hari, bukan jam/menit, untuk event >7 hari lagi (mengurangi noise); untuk event <24 jam tampilkan jam:menit.
+- Validasi: `starts_at` tidak boleh di masa lalu saat event dibuat (kecuali admin sengaja membuat entri retroaktif — di luar scope MVP).
+- Scheduled task harian mengubah status event yang tanggalnya sudah lewat menjadi `completed`.
+
+## Frontend
+
+- Widget countdown di Dashboard
+- Halaman daftar event, bisa difilter berdasarkan status
+- Form buat/edit event (hanya muncul untuk Class Admin)
 
 ## Permission
 
-Create/update/delete: `Class Admin` & `Super Admin` saja (`EventPolicy@create/update/delete`). Read: semua role login, difilter oleh `visibility`.
+Create/update/delete: Class Admin & Super Admin. Read: semua role login, sesuai `visibility`.
+
+## Validation
+
+- `title` wajib diisi
+- `starts_at` wajib diisi, format tanggal+waktu valid
+- `location` boleh kosong (tampilkan "Lokasi menyusul" kalau kosong, bukan string kosong)
+
+## Edge Cases
+
+- Event tanpa lokasi (online/TBA) → tampilkan pesan yang jelas, bukan kosong begitu saja
+- Event dibatalkan (`cancelled`) → tetap tampil di daftar dengan label jelas, tidak dihapus dari database
 
 ## Testing
 
-Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+Cukup test manual: pastikan hanya Class Admin yang bisa membuat event (Member coba akses harus ditolak).
 
-## Related Documentation
+## Related Features
 
-- [Product](../01-product.md)
-- [Development](../02-development.md)
-- [Architecture](../03-architecture.md)
-- [Database](../04-database.md)
+Dashboard, Academic Corner

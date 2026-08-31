@@ -1,50 +1,48 @@
 # Time Capsule
 
-> **Status:** Sengaja ditunda ke P1.** Bukan skeleton menunggu dependensi teknis — semua fondasi (auth, database, API) sudah selesai. Fitur ini ditunda murni karena keputusan prioritas produk.
+## Status
 
-Dokumen ini adalah spesifikasi kerja untuk feature **Time Capsule**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
+Later (sengaja ditunda — bukan menunggu dependensi teknis, murni keputusan prioritas)
 
-## Cara Membaca
+## Tujuan
 
-Urutan praktis:
-
-1. Pahami tujuan dan user flow.
-2. Periksa business rules dan permission.
-3. Lihat data model.
-4. Implement backend + Livewire + UI.
-5. Tangani validation dan edge cases.
-6. Tambahkan test untuk logic kritikal.
-7. Update dokumentasi bila ada perubahan keputusan.
-
-> 🟡 **Status: Sengaja ditunda ke P1.** Bukan skeleton menunggu dependensi teknis — semua fondasi (auth, database, API) sudah selesai. Fitur ini ditunda murni karena keputusan prioritas produk.
+Mahasiswa menulis pesan untuk dirinya sendiri di masa depan (misal: "Semoga saat wisuda nanti aku sudah jadi software engineer"), dibuka otomatis saat tanggal yang ditentukan tiba.
 
 ## Kenapa Ditunda
 
-Time Capsule dievaluasi di [`product/02-problem-solution-feature-mapping.md`](../02-problem-solution-feature-mapping.md) §D3 dan diputuskan **P1**: fitur bagus secara emosional tapi tidak kritikal di hari-hari awal, lebih cocok diluncurkan setelah engagement dasar (feed, gallery, timeline) sudah terbentuk. Tabel untuk fitur ini juga sengaja tidak ada di [`../04-database.md`](../04-database.md) — akan ditambahkan lewat migration baru saat fitur ini mulai dikerjakan, bukan disiapkan lebih dulu (prinsip *Simple First*: tabel kosong yang belum dipakai hanya menambah kebingungan).
+Fitur ini bagus secara emosional, tapi tidak kritikal di hari-hari awal — lebih cocok diluncurkan setelah fitur harian (feed, gallery, timeline) sudah dipakai aktif oleh kelas. Belum ada tabel untuk fitur ini di database saat ini (lihat [`../04-database.md`](../04-database.md)) — akan ditambahkan lewat migration baru saat fitur ini mulai dikerjakan.
 
-## Rancangan Awal (untuk referensi saat P1 dimulai, belum final)
+## Rancangan Awal (referensi saat dikerjakan nanti)
 
-Berdasarkan spesifikasi produk asli:
+### User Flow (draf)
 
-- Data: `author_id`, `message`, `created_at`, `unlock_at`, `visibility`, `status`
-- Aturan inti: pesan **tidak boleh** bisa dibuka (dibaca isinya) sebelum `unlock_at` — validasi ini harus di level server/query, bukan hanya disembunyikan di UI
-- Perlu penanganan timezone eksplisit (`unlock_at` disimpan UTC, dikonversi saat ditampilkan — pola sama dengan `events.starts_at` di [`../04-database.md`](../04-database.md))
+```
+User tulis pesan untuk masa depan
+  ↓
+Tentukan tanggal unlock
+  ↓
+Pesan tersimpan, tidak bisa dibaca siapa pun (termasuk penulisnya) sebelum tanggal unlock
+  ↓
+Tanggal unlock tiba → pesan bisa dibuka
+```
 
-## Yang Harus Diisi Saat Dikerjakan
+### Business Rules (draf)
 
-- [ ] User flow lengkap
-- [ ] Data model final (migration baru)
-- [ ] Endpoint API terkait
-- [ ] Edge case (mis. apa yang terjadi jika user keluar dari kelas sebelum `unlock_at` tiba)
-- [ ] Permission
+- Pesan **tidak boleh bisa dibuka** (dibaca isinya) sebelum `unlock_at` — validasi ini wajib di level server/query, bukan cuma disembunyikan di UI.
+- `unlock_at` disimpan UTC, dikonversi ke waktu lokal saat ditampilkan (pola sama dengan `events.starts_at`).
 
-## Testing
+### Data yang dibutuhkan (draf)
 
-Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+`author_id`, `message`, `created_at`, `unlock_at`, `visibility`, `status`
 
-## Related Documentation
+## Yang Harus Diisi Saat Mulai Dikerjakan
 
-- [Product](../01-product.md)
-- [Development](../02-development.md)
-- [Architecture](../03-architecture.md)
-- [Database](../04-database.md)
+- [ ] User flow final
+- [ ] Migration & Model
+- [ ] Livewire component
+- [ ] Edge case (misalnya: apa yang terjadi kalau user keluar dari kelas sebelum `unlock_at` tiba)
+- [ ] Permission & validasi
+
+## Related Features
+
+Class Timeline (kesamaan tema kenangan), Member Profile

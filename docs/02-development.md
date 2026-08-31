@@ -1,386 +1,211 @@
 # Development Guide
 
-## 1. Tujuan Dokumen
+Dokumen ini menjawab dua pertanyaan:
 
-Dokumen ini adalah panduan paling praktis untuk developer baru.
+1. **"Saya baru clone project ini, sekarang saya harus ngapain?"** → lihat bagian Setup
+2. **"Saya dapat task, saya harus mulai dari mana?"** → lihat bagian Workflow
 
-Targetnya:
+Kalau kamu belum pernah setup project Laravel sebelumnya, tenang — semua command di bawah dijelaskan, bukan cuma dilempar begitu saja.
 
-```text
-Clone
-  ↓
-Install
-  ↓
-Configure
-  ↓
-Run
-  ↓
-Understand
-  ↓
-Find feature
-  ↓
-Code
-  ↓
-Test
-  ↓
-Commit
-  ↓
-Pull Request
-```
+## 1. Requirements
 
-## 2. Requirements
+Install dulu di komputer kamu (kalau belum ada):
 
-Siapkan:
+- **PHP** (versi 8.3 ke atas)
+- **Composer** — package manager untuk PHP (cara install dependency Laravel)
+- **Node.js** dan **npm** — dibutuhkan untuk build Tailwind CSS
+- **MySQL** — database yang kita pakai
+- **Git** — untuk clone & kelola kode
 
-- Git
-- PHP versi yang sesuai dengan versi Laravel di `src/composer.json`
-- Composer
-- Node.js dan npm
-- MySQL
-
-Jangan menebak versi dependency. Jika project sudah memiliki `composer.json` atau `package.json`, ikuti requirement yang tercantum di sana.
-
-## 3. Clone Repository
+## 2. Clone Repository
 
 ```bash
-git clone <URL-REPOSITORY>
-cd digital-class-universe
+git clone https://github.com/angga150/Digital-Class.git
+cd digital-class
+```
+
+Source code Laravel-nya ada di dalam folder `src/`, jadi masuk ke situ dulu:
+
+```bash
 cd src
 ```
 
-Karena source code Laravel berada di `src/`, command Laravel dijalankan dari folder tersebut.
+**Semua command Laravel/Composer/npm di bawah ini dijalankan dari dalam folder `src/`**, bukan dari root repository.
 
-## 4. Install Dependency
-
-Backend:
+## 3. Install Dependency
 
 ```bash
 composer install
 ```
 
-Frontend:
+Ini mengunduh semua library PHP yang dibutuhkan Laravel (didaftarkan di `composer.json`).
 
 ```bash
 npm install
 ```
 
-`composer install` memasang dependency PHP. `npm install` memasang dependency JavaScript/CSS.
+Ini mengunduh semua library JavaScript yang dibutuhkan untuk build Tailwind CSS (didaftarkan di `package.json`).
 
-## 5. Environment
+## 4. Setup Environment (`.env`)
 
-Buat `.env` dari `.env.example`:
+Laravel butuh file `.env` untuk menyimpan konfigurasi lokal (database, dsb.) yang berbeda-beda tiap komputer. File ini **tidak** ikut di-commit ke Git (karena isinya bisa berisi password), jadi kamu perlu buat sendiri dari contohnya:
 
 ```bash
 cp .env.example .env
 ```
 
-Di Windows, jika `cp` tidak tersedia, copy file secara manual:
+**Di Windows** (kalau `cp` tidak dikenali di Command Prompt), pakai:
 
-```text
-.env.example → .env
+```bash
+copy .env.example .env
 ```
 
-Kemudian generate application key:
+Atau kalau pakai Git Bash / WSL, `cp` tetap berfungsi normal.
+
+Setelah itu, generate application key:
 
 ```bash
 php artisan key:generate
 ```
 
-Command ini membuat encryption key yang dibutuhkan Laravel.
+Command ini membuat _application encryption key_ — semacam kunci rahasia yang dipakai Laravel untuk mengenkripsi data sensitif (session, cookie, dll). Wajib dijalankan, kalau tidak Laravel akan error saat dibuka.
 
-**Jangan commit `.env`.**
+## 5. Setup Database
 
-## 6. Database
-
-Buat database MySQL kosong.
-
-Contoh konfigurasi:
+1. Buat database baru di MySQL, misalnya namanya `digital_class`.
+2. Buka file `.env`, sesuaikan bagian berikut dengan database kamu:
 
 ```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=digital_class_universe
+DB_DATABASE=digital_class
 DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Sesuaikan dengan MySQL lokal masing-masing.
+Ganti `DB_USERNAME` dan `DB_PASSWORD` sesuai setup MySQL di komputer kamu (kalau pakai XAMPP/Laragon biasanya `root` tanpa password).
 
-Lalu:
+3. Jalankan migration (migration adalah "cetak biru" struktur tabel — perintah ini yang benar-benar membuat tabel-tabel di database kamu):
 
 ```bash
 php artisan migrate --seed
 ```
 
-Migration membuat struktur tabel. Seeder mengisi data contoh agar developer tidak memulai dari database kosong.
+Flag `--seed` sekaligus mengisi database dengan data contoh (member dummy, beberapa post/event) — supaya kamu tidak mulai dari database kosong yang membosankan saat develop fitur sosial.
 
-Jika project belum memiliki seeder tertentu, gunakan:
+## 6. Menjalankan Project
 
-```bash
-php artisan migrate
-```
+Project ini butuh **dua terminal berjalan bersamaan** — satu untuk server Laravel, satu untuk build Tailwind CSS secara live.
 
-## 7. Menjalankan Aplikasi
-
-Gunakan dua terminal.
-
-### Terminal 1 — Laravel
+**Terminal 1** — jalankan server Laravel:
 
 ```bash
-cd src
 php artisan serve
 ```
 
-### Terminal 2 — Vite
+**Terminal 2** — jalankan Vite (build tool untuk Tailwind/CSS/JS, otomatis update saat kamu edit file styling):
 
 ```bash
-cd src
 npm run dev
 ```
 
-Buka alamat yang ditampilkan Laravel, biasanya:
+Biarkan dua-duanya tetap berjalan selama kamu develop. Buka `http://localhost:8000` di browser — website seharusnya sudah bisa diakses.
 
-```text
-http://127.0.0.1:8000
+## 7. Struktur Project yang Perlu Dipahami Pemula
+
+```
+src/
+├── app/
+│   ├── Models/       ← definisi data (User, Post, Event, dll.)
+│   ├── Livewire/     ← komponen interaktif (logic di balik tampilan)
+│   └── Policies/     ← aturan siapa boleh ngapain
+├── database/
+│   ├── migrations/   ← "cetak biru" struktur tabel
+│   └── seeders/      ← data contoh untuk development
+├── resources/
+│   ├── views/        ← file Blade (template HTML)
+│   └── css/          ← file Tailwind CSS
+├── routes/           ← daftar URL/halaman yang tersedia
+└── tests/            ← automated test
 ```
 
-## 8. Struktur yang Perlu Dipahami
+Penjelasan singkat tiap bagian:
 
-```text
-digital-class-universe/
-├── README.md
-├── CONTRIBUTING.md
-├── docs/
-├── src/
-│   ├── app/
-│   │   ├── Models/
-│   │   ├── Livewire/
-│   │   ├── Policies/
-│   │   └── ...
-│   ├── database/
-│   │   ├── migrations/
-│   │   └── seeders/
-│   ├── resources/
-│   │   ├── views/
-│   │   ├── css/
-│   │   └── js/
-│   ├── routes/
-│   └── tests/
-└── .github/
-```
+- **`app/Models`** — tiap file di sini mewakili satu "jenis data", misalnya `Post.php` mewakili tabel `posts`. Di sinilah kamu definisikan relasi antar tabel (misal: satu Post punya banyak Comment).
+- **`app/Livewire`** — tiap file di sini adalah satu komponen interaktif, misalnya `CreatePost.php` menangani logic saat user bikin post baru. Livewire component biasanya berpasangan dengan file Blade di `resources/views/livewire/`.
+- **`database/migrations`** — setiap kali kamu butuh tabel baru atau kolom baru, kamu buat file migration baru di sini (bukan mengubah tabel manual lewat phpMyAdmin).
+- **`database/seeders`** — data contoh/dummy untuk kebutuhan development, supaya tim tidak kerja dengan database kosong.
+- **`resources/views`** — file `.blade.php`, ini yang menentukan tampilan HTML. File di `resources/views/livewire/` adalah tampilan untuk komponen Livewire.
+- **`resources/css`** — file Tailwind, biasanya kamu jarang perlu edit langsung karena styling dilakukan lewat class di file Blade.
+- **`routes`** — file `web.php` di sini menentukan URL apa mengarah ke halaman/komponen apa.
+- **`tests`** — automated test, lihat bagian Testing di bawah untuk kapan kamu wajib menulis test.
 
-### Where Should I Edit?
+## 8. "Saya Ingin... Pergi ke..."
 
-| Saya ingin... | Pergi ke... |
-|---|---|
-| Mengubah database | `src/database/migrations` |
-| Mengisi data contoh | `src/database/seeders` |
-| Mengubah Model | `src/app/Models` |
-| Membuat/ubah Livewire | `src/app/Livewire` |
-| Mengubah Policy | `src/app/Policies` |
-| Mengubah tampilan | `src/resources/views` |
-| Mengubah CSS | `src/resources/css` |
-| Mengubah JS kecil | `src/resources/js` |
-| Mengubah route | `src/routes` |
-| Membuat test | `src/tests` |
-| Mengubah config | `src/config` |
+Tabel cepat kalau kamu bingung file mana yang harus diedit:
 
-Struktur internal Laravel tetap mengikuti convention Laravel. Jangan membuat `backend/` dan `frontend/` terpisah.
+| Saya ingin...                                                       | Pergi ke...                                                                    |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Mengubah/menambah struktur tabel database                           | `src/database/migrations/` (buat file migration baru)                          |
+| Mengubah relasi/logic data                                          | `src/app/Models/`                                                              |
+| Membuat komponen interaktif baru (misal: form, tombol dengan logic) | `src/app/Livewire/`                                                            |
+| Mengubah tampilan/HTML                                              | `src/resources/views/`                                                         |
+| Mengubah styling                                                    | Class Tailwind langsung di file Blade (jarang perlu edit `src/resources/css/`) |
+| Mengubah aturan siapa boleh ngapain                                 | `src/app/Policies/`                                                            |
+| Menambah/mengubah URL halaman                                       | `src/routes/web.php`                                                           |
+| Menambah data contoh untuk development                              | `src/database/seeders/`                                                        |
+| Menulis automated test                                              | `src/tests/`                                                                   |
+| Mengubah konfigurasi Laravel                                        | `src/config/` (jarang perlu diubah manual)                                     |
 
-## 9. Cara Kerja Satu Feature
+## 9. How to Create a Feature (Workflow Standar)
 
-Alur normal:
+Ini alur yang dipakai setiap kali mengerjakan fitur baru — baik kamu fokus backend, frontend, atau dua-duanya:
 
-```text
-Browser
-  ↓
-Route
-  ↓
-Livewire Component
-  ↓
-Validation
-  ↓
-Policy / Authorization
-  ↓
-Model / Eloquent
-  ↓
-MySQL
-  ↓
-Livewire State
-  ↓
-Blade
-  ↓
-Tailwind CSS
-  ↓
-Browser
-```
+1. **Baca dokumentasi fitur** di `docs/features/[nama-fitur].md` — pahami user flow, business rules, dan edge case-nya dulu sebelum coding
+2. **Buat/ubah migration** kalau fitur butuh tabel/kolom baru
+3. **Buat/ubah Model** dan relasinya
+4. **Buat Livewire component** untuk logic interaktifnya
+5. **Implementasikan business logic** sesuai aturan di dokumentasi fitur
+6. **Tambahkan validation** — jangan percaya input mentah dari user
+7. **Tambahkan authorization** (Policy) kalau fitur ini punya aturan siapa-boleh-apa
+8. **Buat tampilan (Blade)**
+9. **Styling dengan Tailwind**
+10. **Tangani loading state, empty state, error state** — lihat prinsip UI di [`03-architecture.md`](./03-architecture.md)
+11. **Tambahkan test** untuk logic yang berisiko (lihat bagian Testing di bawah)
+12. **Test manual** — coba sendiri di browser sebelum PR, coba juga dengan role berbeda (misal: Member dan Class Admin) untuk pastikan permission benar
+13. **Commit** dengan pesan yang jelas (lihat [`CONTRIBUTING.md`](../CONTRIBUTING.md))
+14. **Push** branch kamu
+15. **Buat Pull Request**
 
-Untuk feature baru:
+Urutan 2→3→4 (migration → model → Livewire) bukan aturan kaku, tapi pola yang disarankan: bangun dari data ke luar, jangan mulai dari tampilan lalu menambal logic belakangan.
 
-1. Baca feature specification.
-2. Tentukan data yang dibutuhkan.
-3. Buat/ubah migration.
-4. Buat/ubah Model dan relationship.
-5. Tambahkan Policy jika ada permission.
-6. Buat Livewire component.
-7. Implement logic.
-8. Tambahkan validation.
-9. Buat UI Blade.
-10. Styling dengan Tailwind.
-11. Handle loading/empty/error state.
-12. Test logic kritikal.
-13. Test manual.
-14. Commit.
-15. Push.
-16. Pull Request.
+## 10. Testing
 
-## 10. Backend dan Frontend Bukan Dua Aplikasi
+Kita **tidak** mengejar angka coverage tinggi hanya supaya terlihat profesional. Prioritas: test logic yang **berisiko menyebabkan data salah atau permission bocor** — bukan semua baris kode.
 
-Dalam Laravel + Livewire, satu feature biasanya dikerjakan end-to-end.
+**Wajib ditest:**
 
-Contoh Birthday:
+- Authentication (login, registrasi lewat join code)
+- Authorization (Policy — pastikan Member tidak bisa lakukan aksi Class Admin)
+- Birthday visibility (data privat tidak bocor ke yang tidak berhak)
+- Poll voting (satu user tidak bisa vote dua kali)
+- Post & comment (soft delete, reaction tidak bisa dobel)
+- Aturan bisnis penting lain yang disebutkan di masing-masing `docs/features/*.md`
 
-```text
-profiles.birth_date
-      ↓
-Livewire state / query
-      ↓
-birthday business rule
-      ↓
-Blade countdown
-      ↓
-Tailwind UI
-```
+**Tidak wajib ditest detail:**
 
-Backend developer dan frontend developer perlu berkomunikasi mengenai data, state, validation, permission, dan UI.
+- Tampilan visual (styling) — dicek manual saat development
+- CRUD sederhana tanpa business logic (misal: update bio profil)
 
-## 11. Testing
-
-Prioritaskan logic yang berisiko:
-
-- `class_id` scoping,
-- visibility enforcement,
-- role/Policy,
-- vote/reaction unique constraint,
-- achievement trigger,
-- authentication/authorization,
-- business rules penting.
-
-Tidak perlu mengejar 100% coverage.
-
-Tooling MVP:
-
-- PHPUnit/Pest,
-- `RefreshDatabase`,
-- SQLite in-memory bila kompatibel,
-- Livewire component testing.
-
-Dusk/browser testing tidak menjadi prioritas MVP.
-
-## 12. Manual Test
-
-Untuk UI, cek minimal:
-
-- happy path,
-- validation error,
-- empty state,
-- loading state,
-- permission berbeda,
-- mobile/responsive layout.
-
-Untuk feature yang menyentuh privacy, cek minimal dua role berbeda.
-
-## 13. Security Basics
-
-Sebelum PR:
-
-- [ ] input divalidasi server-side,
-- [ ] authorization diperiksa,
-- [ ] file upload divalidasi,
-- [ ] tidak ada secret di Git,
-- [ ] data private tidak tampil ke user yang salah,
-- [ ] CSRF tetap aktif,
-- [ ] XSS tidak diperkenalkan,
-- [ ] query ter-scope `class_id`.
-
-Laravel sudah membantu menyediakan CSRF protection, password hashing, dan mekanisme authentication. Jangan menonaktifkannya tanpa alasan.
-
-## 14. Git Workflow
+Tooling: PHPUnit/Pest bawaan Laravel. Test Livewire component pakai `Livewire::test(...)` bawaan Laravel — tidak perlu browser testing otomatis (Dusk) di MVP, cukup jalankan manual di browser sebelum PR.
 
 ```bash
-git pull origin main
-git checkout -b feature/birthday-countdown
-
-# coding
-
-git add .
-git commit -m "feat: tambah birthday countdown"
-git push origin feature/birthday-countdown
+php artisan test
 ```
 
-Buat Pull Request.
+## 11. Kalau Ada Masalah Saat Setup
 
-`main` tidak menerima push langsung.
+Masalah umum yang sering terjadi:
 
-## 15. Pull Request Checklist
-
-- [ ] Feature berjalan.
-- [ ] Business rules sesuai dokumentasi.
-- [ ] Permission benar.
-- [ ] Privacy benar.
-- [ ] Test kritikal dijalankan.
-- [ ] Dokumentasi diupdate bila ada perubahan.
-- [ ] Tidak ada `.env`/secret.
-- [ ] PR siap direview.
-
-## 16. Troubleshooting Cepat
-
-### Composer error
-
-```bash
-composer install
-```
-
-Pastikan versi PHP sesuai dengan requirement `composer.json`.
-
-### Vite tidak jalan
-
-```bash
-npm install
-npm run dev
-```
-
-### Application key belum ada
-
-```bash
-php artisan key:generate
-```
-
-### Database error
-
-Periksa:
-
-- MySQL hidup,
-- nama database,
-- username/password,
-- host/port,
-- `.env` berada di `src/.env`.
-
-### Setelah mengubah migration
-
-Untuk development lokal dan jika data dummy boleh dihapus:
-
-```bash
-php artisan migrate:fresh --seed
-```
-
-**Jangan gunakan `migrate:fresh` di production.**
-
-## 17. Prinsip Utama
-
-Jika bingung harus memakai pola apa, pilih:
-
-> **Laravel convention terlebih dahulu.**
-
-Jangan membuat repository/service/factory/event system tambahan hanya karena terlihat lebih profesional. Tambahkan abstraction ketika kompleksitas nyata sudah membutuhkannya.
+- **`php artisan serve` error "could not find driver"** → cek ekstensi PHP untuk MySQL (`pdo_mysql`) sudah aktif
+- **`npm run dev` tidak update tampilan** → pastikan Terminal 1 (`php artisan serve`) dan Terminal 2 (`npm run dev`) dua-duanya tetap berjalan bersamaan
+- **Error "SQLSTATE... Access denied"** → cek ulang `DB_USERNAME`/`DB_PASSWORD` di `.env` sesuai setup MySQL kamu
+- **Masih bingung juga?** → tanya di grup tim, jangan diam-diam stuck berjam-jam

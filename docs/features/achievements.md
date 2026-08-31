@@ -1,61 +1,69 @@
 # Achievement System
 
-> **Status:** ✅ Spesifikasi final (versi minimal). Referensi produk: [`product/02-problem-solution-feature-mapping.md`](../02-problem-solution-feature-mapping.md) §E2.
+## Status
 
-Dokumen ini adalah spesifikasi kerja untuk feature **Achievement System**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
+Planned (versi minimal — 3-5 badge dasar)
 
-## Cara Membaca
+## Tujuan
 
-Urutan praktis:
-
-1. Pahami tujuan dan user flow.
-2. Periksa business rules dan permission.
-3. Lihat data model.
-4. Implement backend + Livewire + UI.
-5. Tangani validation dan edge cases.
-6. Tambahkan test untuk logic kritikal.
-7. Update dokumentasi bila ada perubahan keputusan.
+Apresiasi ringan atas kontribusi positif di kelas — bukan sistem kompetitif yang mempermalukan siapa pun.
 
 ## User Flow
 
-1. Sistem otomatis memberi achievement saat trigger terpenuhi (mis. `first_login` saat user pertama kali login).
-2. User melihat achievement yang sudah didapat di halaman profil sendiri & profil orang lain (jika visibility mengizinkan).
-3. Notifikasi in-app muncul saat achievement baru didapat (lihat `features/notifications.md`).
+```
+User melakukan sesuatu yang jadi trigger (misal: login pertama kali)
+  ↓
+Sistem otomatis kasih achievement, tidak perlu diajukan manual
+  ↓
+Notifikasi in-app muncul
+  ↓
+User lihat koleksi achievement-nya di halaman profil (sendiri & orang lain, sesuai visibility)
+```
 
-## Achievement MVP (3–5 badge dasar)
+## Business Rules
+
+- **Achievement MVP (3-5 badge dasar saja):**
 
 | Code | Trigger |
 |---|---|
 | `first_login` | Login pertama kali berhasil |
-| `profile_complete` | Semua field wajib profil terisi (bio, hobby, avatar) |
-| `historian` | Upload ≥5 entri timeline/gallery (skala diturunkan dari draf awal 20, disesuaikan realita kelas kecil) |
+| `profile_complete` | Semua field wajib profil terisi |
+| `historian` | Upload ≥5 entri timeline/gallery |
 
-Achievement lain (Social Butterfly, Night Owl, Class Legend, dst.) ditunda ke P1 — butuh event-tracking yang lebih kaya (lihat rasional di `../01-product.md` §E2).
+- Achievement lain (Social Butterfly, Night Owl, Class Legend, dll.) ditunda ke pasca-MVP — butuh pelacakan aktivitas yang lebih kaya.
+- Gamifikasi **tidak boleh kompetitif** — tidak ada leaderboard yang mempermalukan performa rendah, tidak ada peringkat publik "siapa paling sedikit achievement".
+- Achievement tidak bisa dihapus/di-revoke oleh user sendiri.
 
-## Data Model
+## Database
 
-Tabel `achievements`, `user_achievements` — lihat [`../04-database.md`](../04-database.md). Trigger dieksekusi lewat Laravel Event Listener (mis. `UserLoggedIn` event → listener cek & award `first_login`), bukan dicek manual di tiap controller.
+Tabel `achievements`, `user_achievements` — kombinasi user+achievement di-unique-kan supaya tidak ada award dobel. Lihat [`../04-database.md`](../04-database.md).
 
-## API
+## Backend
 
-`GET /api/v1/achievements` — lihat [`../03-architecture.md`](../03-architecture.md).
+- Trigger dijalankan lewat Laravel Event Listener (misal: event `UserLoggedIn` → listener cek & award `first_login`) — **bukan** dicek manual di tiap controller, supaya logic-nya tidak tercecer di banyak tempat.
+- Kalau trigger terpenuhi lagi (misal login berkali-kali), award kedua diabaikan diam-diam (tidak error, tidak dobel) karena unique constraint.
 
-## Edge Case & Validasi
+## Frontend
 
-- Trigger terpenuhi lebih dari sekali (mis. login berkali-kali) → `user_achievements` punya unique constraint (`user_id`, `achievement_id`), award kedua diabaikan diam-diam (tidak error, tidak duplikat).
-- Achievement tidak boleh bisa di-revoke oleh user sendiri (hanya Super Admin lewat backend, untuk kasus salah trigger).
+- Badge ditampilkan di halaman profil (`<x-badge>`)
+- Notifikasi in-app saat dapat achievement baru
 
 ## Permission
 
-Read: semua role, tunduk visibility profil. Award: sistem otomatis (bukan aksi manual user), tidak ada endpoint "create achievement for user" yang bisa dipanggil dari sisi client.
+Read: semua role, sesuai visibility profil. Award: otomatis oleh sistem — tidak ada tombol/endpoint untuk user memberi achievement ke diri sendiri atau orang lain.
+
+## Validation
+
+Tidak ada input user langsung (murni trigger otomatis).
+
+## Edge Cases
+
+- User trigger achievement yang sama berkali-kali → hanya di-award sekali, sisanya diabaikan tanpa error
 
 ## Testing
 
-Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+**Wajib ditest**: achievement tidak bisa ke-award dobel untuk user yang sama.
 
-## Related Documentation
+## Related Features
 
-- [Product](../01-product.md)
-- [Development](../02-development.md)
-- [Architecture](../03-architecture.md)
-- [Database](../04-database.md)
+Dashboard, Member Profile, Class Gallery/Timeline (trigger `historian`)

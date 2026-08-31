@@ -1,53 +1,67 @@
 # Birthday System
 
-> **Status:** ✅ Spesifikasi final. Referensi produk: [`product/02-problem-solution-feature-mapping.md`](../02-problem-solution-feature-mapping.md) §B1.
+## Status
 
-Dokumen ini adalah spesifikasi kerja untuk feature **Birthday System**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
+Planned (belum diimplementasi)
 
-## Cara Membaca
+## Tujuan
 
-Urutan praktis:
-
-1. Pahami tujuan dan user flow.
-2. Periksa business rules dan permission.
-3. Lihat data model.
-4. Implement backend + Livewire + UI.
-5. Tangani validation dan edge cases.
-6. Tambahkan test untuk logic kritikal.
-7. Update dokumentasi bila ada perubahan keputusan.
+Supaya tidak ada lagi yang lupa ulang tahun teman sekelas — sekaligus jadi salah satu alasan emosional utama orang buka dashboard tiap hari.
 
 ## User Flow
 
-1. Saat mengisi profil, user mengisi `birth_date` (wajib tanggal+bulan, tahun opsional lewat toggle `birth_year_visible`).
-2. User memilih `birthday_visibility` (`public`/`class_only`/`private`).
-3. Dashboard & halaman "Birthday Calendar" menampilkan birthday terdekat sesuai visibility masing-masing user terhadap viewer.
-4. Pada hari H, sistem menandai user tersebut sebagai "berulang tahun hari ini" di dashboard — tanpa membuka detail tanggal lahir jika visibility-nya `private`.
+```
+User mengisi profil
+  ↓
+Isi tanggal lahir (tahun opsional) + pilih visibility
+  ↓
+Sistem hitung otomatis siapa yang ulang tahun dalam waktu dekat
+  ↓
+Tampil di Dashboard & halaman Birthday Calendar
+  ↓
+Pada hari-H, sistem tandai "hari ini ulang tahun X" (sesuai visibility)
+```
 
-## Data Model
+## Business Rules
 
-Field ada di tabel `profiles` (lihat [`../04-database.md`](../04-database.md)): `birth_date`, `birth_year_visible`, `birthday_visibility`. Tidak ada tabel terpisah — birthday adalah atribut profil, bukan entitas sendiri.
+- **Tahun lahir tidak pernah wajib** — user boleh isi tanggal+bulan saja.
+- Visibility birthday: `public` / `class_only` (default) / `private`.
+- Kalau `private`, sistem tetap boleh menandai "hari ini ulang tahun X" untuk keperluan sapaan sosial, tapi **tidak menampilkan tanggal/tahun lahir eksak** ke user lain.
+- Tahun kabisat (29 Februari) dirayakan di 28 Februari pada tahun biasa.
 
-## API
+## Database
 
-`GET /api/v1/birthdays/upcoming` — lihat [`../03-architecture.md`](../03-architecture.md).
+Field ada di tabel `profiles`: `birth_date`, `birth_year_visible`, `birthday_visibility`. Tidak ada tabel terpisah — birthday adalah atribut profil. Lihat [`../04-database.md`](../04-database.md).
 
-## Edge Case & Validasi
+## Backend
 
-- User tidak mengisi `birth_date` sama sekali → tidak muncul di widget birthday manapun, tidak error.
-- `birthday_visibility = private` → sistem tetap boleh menandai "hari ini ulang tahun X" (untuk keperluan sapaan sosial), tapi **tidak** menampilkan tanggal/tahun lahir eksak ke user lain.
-- Tahun kabisat (29 Februari) → tampilkan perayaan di 28 Februari pada tahun non-kabisat (aturan bisnis sederhana, dicatat di kode agar tidak ambigu).
+- Query "birthday terdekat" = urutkan seluruh member berdasarkan jarak `birth_date` (bulan+tanggal saja) dari hari ini.
+- Logic penentuan "hari ini ulang tahun siapa" dijalankan tiap hari (bisa lewat scheduled task Laravel).
+
+## Frontend
+
+- Widget di Dashboard: "🎂 Birthday berikutnya: [nama] — [x] hari lagi"
+- Halaman Birthday Calendar: list/kalender semua birthday sesuai visibility yang boleh dilihat viewer
+- Form isi tanggal lahir di halaman edit profil, dengan toggle visibility di sebelahnya (bukan tersembunyi di menu terpisah)
 
 ## Permission
 
-Setiap user hanya bisa mengubah `birth_date`/visibility miliknya sendiri (`ProfilePolicy@update`, lihat [`../03-architecture.md`](../03-architecture.md)). Class Admin tidak bisa mengubah birthday member lain.
+Setiap user hanya bisa mengubah `birth_date`/visibility miliknya sendiri. Class Admin **tidak bisa** mengubah birthday member lain.
+
+## Validation
+
+- `birth_date` harus tanggal valid, tidak boleh di masa depan
+- `birthday_visibility` harus salah satu dari `public`/`class_only`/`private`
+
+## Edge Cases
+
+- User tidak mengisi `birth_date` sama sekali → tidak muncul di widget manapun, tidak error
+- Dua orang ulang tahun di hari yang sama → dua-duanya tampil, bukan cuma satu
 
 ## Testing
 
-Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+**Wajib ditest**: visibility `private` benar-benar tidak membocorkan tanggal/tahun lahir ke user lain, meski status "hari ini ulang tahun" tetap muncul.
 
-## Related Documentation
+## Related Features
 
-- [Product](../01-product.md)
-- [Development](../02-development.md)
-- [Architecture](../03-architecture.md)
-- [Database](../04-database.md)
+Dashboard, Member Profile

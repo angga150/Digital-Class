@@ -1,53 +1,66 @@
 # Member Profile
 
-> **Status:** ✅ Spesifikasi final. Referensi produk: [`product/02-problem-solution-feature-mapping.md`](../02-problem-solution-feature-mapping.md) §B2, [`product/03-target-user-analysis.md`](../03-target-user-analysis.md).
+## Status
 
-Dokumen ini adalah spesifikasi kerja untuk feature **Member Profile**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
+Planned (belum diimplementasi)
 
-## Cara Membaca
+## Tujuan
 
-Urutan praktis:
-
-1. Pahami tujuan dan user flow.
-2. Periksa business rules dan permission.
-3. Lihat data model.
-4. Implement backend + Livewire + UI.
-5. Tangani validation dan edge cases.
-6. Tambahkan test untuk logic kritikal.
-7. Update dokumentasi bila ada perubahan keputusan.
+Supaya anggota kelas lebih saling kenal — profil yang terasa personal dan santai, bukan seperti CV/LinkedIn.
 
 ## User Flow
 
-1. Setelah registrasi (via join code, lihat `../03-architecture.md`), user diarahkan ke onboarding singkat: isi nickname, avatar, bio, hobi, favorit, fun fact, birthday.
-2. `achievement: profile_complete` otomatis didapat saat field wajib terisi.
-3. User bisa mengubah `profile_visibility` dan `birthday_visibility` kapan saja dari halaman pengaturan.
-4. User lain melihat profil lewat halaman "Members" (daftar seluruh anggota kelas) atau langsung dari feed/gallery/timeline (klik nama).
+```
+User selesai registrasi (via join code)
+  ↓
+Diarahkan ke onboarding singkat: isi nickname, avatar, bio, hobi, favorit, fun fact, birthday
+  ↓
+Achievement "profile_complete" otomatis didapat kalau field wajib terisi
+  ↓
+User bisa ubah visibility kapan saja dari halaman pengaturan
+  ↓
+User lain lihat profil dari halaman Members atau klik nama di feed/gallery/timeline
+```
 
-## Data Model
+## Business Rules
 
-Tabel `profiles` (1:1 dengan `users`) — lihat [`../04-database.md`](../04-database.md). Sengaja terpisah dari `users` (bukan menambah kolom langsung di `users`) agar tabel auth tetap ramping dan bebas dari data yang sering berubah/besar (avatar, bio panjang).
+- Field seperti `hobby`/`favorite`/`fun_fact` sengaja bebas/santai — **bukan** form terstruktur formal seperti CV.
+- Tidak ada avatar → tampilkan avatar default berupa inisial nama, bukan gambar placeholder generik.
+- Tidak ada nickname → fallback tampilkan nama asli.
 
-## API
+## Database
 
-`GET /api/v1/me`, `PATCH /api/v1/profile`, `GET /api/v1/members`, `GET /api/v1/members/{id}` — lihat [`../03-architecture.md`](../03-architecture.md).
+Tabel `profiles`, satu-satu dengan `users`. Lihat [`../04-database.md`](../04-database.md).
 
-## Edge Case & Validasi
+## Backend
 
-- Nickname kosong → fallback tampilkan `name` asli dari `users`.
-- Avatar tidak diupload → tampilkan avatar default generatif (inisial nama), bukan gambar placeholder generik yang terasa impersonal.
-- Profil terasa "seperti CV" adalah anti-pattern eksplisit dari produk — field seperti `hobby`/`favorite`/`fun_fact` didesain sebagai array bebas/teks santai, bukan form terstruktur formal.
+- `ProfilePolicy` — hanya pemilik profil yang bisa update profilnya sendiri.
+- Visibility check di level presenter/resource — field seperti `birth_date` difilter sebelum dikirim ke tampilan, bukan disembunyikan cuma di sisi Blade.
+
+## Frontend
+
+- Halaman "Members" — daftar seluruh anggota kelas
+- Halaman detail profil per member
+- Form edit profil dengan toggle visibility di sebelah tiap field sensitif
 
 ## Permission
 
-Update: hanya pemilik profil sendiri (`ProfilePolicy@update`). Read: tunduk `profile_visibility` per field, lihat [`../03-architecture.md`](../03-architecture.md) §"Privacy Enforcement".
+Update: hanya pemilik profil sendiri. Read: semua role login, field mengikuti `profile_visibility`/`birthday_visibility` masing-masing.
+
+## Validation
+
+- `nickname` maksimal 50 karakter
+- `bio`, `fun_fact` maksimal panjang wajar (misal 500 karakter) supaya tidak jadi paragraf tak berujung
+- Upload avatar: lihat aturan file upload di [`../03-architecture.md`](../03-architecture.md) §7
+
+## Edge Cases
+
+- Profil belum lengkap sama sekali (user baru) → tampilkan tetap, dengan ajakan lengkapi profil, bukan halaman error
 
 ## Testing
 
-Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+**Wajib ditest**: user A tidak bisa mengubah profil user B lewat manipulasi request langsung (bukan cuma disembunyikan di UI).
 
-## Related Documentation
+## Related Features
 
-- [Product](../01-product.md)
-- [Development](../02-development.md)
-- [Architecture](../03-architecture.md)
-- [Database](../04-database.md)
+Dashboard, Birthday System, Social Feed (author info), Achievement System

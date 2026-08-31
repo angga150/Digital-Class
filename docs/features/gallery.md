@@ -1,53 +1,66 @@
 # Class Gallery
 
-> **Status:** ✅ Spesifikasi final. Referensi produk: [`product/02-problem-solution-feature-mapping.md`](../02-problem-solution-feature-mapping.md) §D1.
+## Status
 
-Dokumen ini adalah spesifikasi kerja untuk feature **Class Gallery**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
+Planned (belum diimplementasi)
 
-## Cara Membaca
+## Tujuan
 
-Urutan praktis:
-
-1. Pahami tujuan dan user flow.
-2. Periksa business rules dan permission.
-3. Lihat data model.
-4. Implement backend + Livewire + UI.
-5. Tangani validation dan edge cases.
-6. Tambahkan test untuk logic kritikal.
-7. Update dokumentasi bila ada perubahan keputusan.
+Satu tempat terpusat untuk foto kelas — supaya tidak tercecer di banyak HP dan hilang setelah lulus (prinsip Memory Forever).
 
 ## User Flow
 
-1. Member membuat/memilih album (kategori: Class Photo, Event, Campus, Random, Meme, Throwback).
-2. Upload foto ke album, opsional caption dan tag member lain.
-3. User lain bisa react, comment, report.
-4. Album ditampilkan sebagai grid dengan lazy-loading thumbnail (bukan load semua resolusi penuh sekaligus — penting untuk performa di koneksi kampus yang bervariasi).
+```
+Member buat/pilih album (kategori: Class Photo, Event, Campus, Random, Meme, Throwback)
+  ↓
+Upload foto ke album, isi caption (opsional), tag member lain (opsional)
+  ↓
+User lain react, comment, atau report
+  ↓
+Foto ditampilkan sebagai grid dengan thumbnail
+```
 
-## Data Model
+## Business Rules
 
-Tabel `gallery_albums`, `gallery_media`, `media_tags` — lihat [`../04-database.md`](../04-database.md). Strategi penyimpanan file dibahas terpisah di [`../05-deployment.md`](../05-deployment.md) — dokumen ini hanya mengatur data model, bukan driver storage.
+- Setiap foto harus masuk ke sebuah album — tidak ada foto "lepas" di luar album.
+- Upload dibatasi 5 MB per file, tipe `jpg`/`jpeg`/`png`/`webp` saja (lihat [`../03-architecture.md`](../03-architecture.md) §7).
+- Tag member yang sudah keluar/alumni tetap diperbolehkan — foto lama tetap relevan secara historis.
+- Foto disimpan di local disk untuk MVP, dengan rencana pindah ke object storage kalau traffic naik (lihat [`../05-deployment.md`](../05-deployment.md) §5).
 
-## API
+## Database
 
-`GET /api/v1/albums`, `POST /api/v1/albums/{id}/media` — lihat [`../03-architecture.md`](../03-architecture.md).
+Tabel `gallery_albums`, `gallery_media`, `media_tags`. Lihat [`../04-database.md`](../04-database.md).
 
-## Edge Case & Validasi
+## Backend
 
-- Ukuran file upload dibatasi (nilai pasti ditentukan di `../05-deployment.md` sesuai driver storage yang dipilih) — validasi di server, bukan hanya client.
-- Tag member yang bukan anggota kelas (sudah keluar/alumni) → tetap diperbolehkan, karena foto lama tetap relevan secara historis (prinsip *Memory Forever*).
-- Upload gambar tanpa album (album belum dibuat) → wajib pilih/buat album dulu, tidak ada foto "lepas" di luar album.
+- `GalleryMediaPolicy@create` — semua role login berstatus `active`.
+- Generate thumbnail otomatis saat upload (server-side, pakai library image processing) — jangan andalkan resize di sisi browser.
+- Validasi tipe & ukuran file **wajib di server**, bukan cuma di form HTML.
+
+## Frontend
+
+- Grid foto (lazy-loading thumbnail, bukan load semua resolusi penuh sekaligus)
+- Modal lightbox saat foto diklik, dengan comment & reaction
+- Form buat album baru & upload foto
 
 ## Permission
 
-Upload: semua role login berstatus `active` (`GalleryMediaPolicy@create`). Moderasi (hapus/report review): Moderator ke atas.
+Upload: semua role login berstatus `active`. Moderasi (hapus/review report): Moderator ke atas.
+
+## Validation
+
+- File wajib gambar (`image`), maksimal 5 MB
+- Caption opsional, maksimal panjang wajar
+
+## Edge Cases
+
+- Upload tanpa pilih album dulu → wajib pilih/buat album, tidak ada jalan pintas upload tanpa album
+- Report ganda pada foto yang sama → ditampilkan teragregasi ("3 laporan") di antrean moderator, bukan numpuk sebagai entri terpisah
 
 ## Testing
 
-Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+Tidak perlu test kompleks — cukup pastikan validasi ukuran/tipe file benar-benar ditolak di server (bukan cuma dicegah di form).
 
-## Related Documentation
+## Related Features
 
-- [Product](../01-product.md)
-- [Development](../02-development.md)
-- [Architecture](../03-architecture.md)
-- [Database](../04-database.md)
+Class Timeline, Moderation, Member Profile (tagging)

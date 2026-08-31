@@ -1,365 +1,231 @@
 # Database
 
+Dokumen ini menjawab: **"Data ini disimpan di mana, dan berhubungan dengan apa?"**
+
 ## 1. Database Technology
 
-**MySQL** digunakan untuk development utama dan production MVP.
+**MySQL**, diakses lewat **Eloquent** (ORM bawaan Laravel — cara kita baca/tulis database pakai kode PHP, bukan SQL manual).
 
-Setiap perubahan schema dilakukan melalui Laravel migration.
+## 2. Naming Convention
 
-## 2. Aturan Data Utama
+- Nama tabel: huruf kecil, jamak, pakai underscore — contoh `posts`, `gallery_media`, `class_memberships`
+- Nama kolom: huruf kecil, underscore — contoh `birth_date`, `created_at`
+- Primary key: selalu `id` (auto-increment)
+- Foreign key: `{nama_tabel_tunggal}_id` — contoh `user_id`, `class_id`, `poll_id`
+- Tiap tabel otomatis punya `created_at` dan `updated_at` (bawaan Eloquent)
 
-- `users` menyimpan identitas login.
-- `class_memberships` menghubungkan user dengan class.
-- Role dan status berada di membership.
-- Data feature yang milik kelas di-scope dengan `class_id`.
-- Profile dipisahkan dari user.
-- Data yang perlu soft delete menggunakan `deleted_at`.
-- Constraint database digunakan untuk mencegah duplikasi penting.
+## 3. Aturan Global yang Berlaku Semua Tabel
 
-## 3. Naming Convention
+1. **Semua tabel yang menyimpan data milik satu kelas wajib punya kolom `class_id`.** Setiap query otomatis difilter berdasarkan `class_id` lewat *global scope* Eloquent — jadi kita tidak perlu (dan tidak boleh) menambahkan `where('class_id', ...)` manual di tiap controller/component. Ini penting supaya data satu kelas tidak pernah bocor ke kelas lain kalau nanti aplikasi ini dipakai lebih dari satu kelas.
+2. **Soft delete** dipakai di tabel yang datanya termasuk kenangan (posts, gallery_media, timeline_entries, comments) — data yang dihapus tidak langsung hilang permanen, ada jeda untuk pemulihan.
+3. **Visibility** — kolom `visibility` dipakai berulang di banyak tabel, nilainya salah satu dari: `public`, `class_only`, `admin_only`, `private`. Lihat penjelasan lengkap privacy model di [`01-product.md`](./01-product.md) §8.
 
-Gunakan convention Laravel:
+## 4. Main Tables
 
-- tabel plural snake_case,
-- primary key `id`,
-- foreign key `<model>_id`,
-- timestamp `created_at`, `updated_at`,
-- soft delete `deleted_at`.
+### `users` — akun login
 
-## 4. Tabel Fondasi
-
-### `users`
-
-| Kolom | Tipe | Keterangan |
+| Kolom | Tipe | Catatan |
 |---|---|---|
-| id | bigint PK | identity |
-| name | string | nama |
-| email | string unique | login |
-| password | string | hashed |
-| email_verified_at | timestamp nullable | verifikasi |
+| id | bigint | primary key |
+| name | string | |
+| email | string | unique |
+| password | string | ter-hash otomatis |
 
-### `classes`
+### `classes` — data kelas
 
-| Kolom | Tipe | Keterangan |
+| Kolom | Tipe | Catatan |
 |---|---|---|
-| id | bigint PK | |
-| name | string | contoh `TI-6A` |
-| graduation_target_date | date nullable | countdown |
-| join_code | string unique | kode join |
-| join_code_enabled | boolean | dapat dimatikan |
+| id | bigint | |
+| name | string | contoh: "TI-6A" |
+| join_code | string | unique, kode undangan untuk registrasi |
+| graduation_target_date | date, nullable | untuk countdown wisuda |
 
-Hierarki Faculty/Department/Campus tidak dibuat sebagai tabel di MVP.
+### `class_memberships` — relasi user ↔ kelas, tempat role & status disimpan
 
-### `class_memberships`
+**Ini tabel paling penting untuk dipahami.** Role dan status disimpan di sini, **bukan** di tabel `users` — karena satu user bisa punya role berbeda kalau ikut lebih dari satu kelas, dan statusnya bisa berubah (misalnya jadi alumni).
 
-| Kolom | Tipe | Keterangan |
+| Kolom | Tipe | Catatan |
 |---|---|---|
-| id | bigint PK | |
-| user_id | FK | user |
-| class_id | FK | class |
+| id | bigint | |
+| user_id | FK → users | |
+| class_id | FK → classes | |
 | role | enum | `super_admin`, `class_admin`, `moderator`, `member` |
 | status | enum | `active`, `alumni`, `inactive` |
 | joined_at | timestamp | |
 
-Unique:
+### `profiles` — data profil (satu-satu dengan `users`)
 
-```text
-(user_id, class_id)
-```
+| Kolom | Tipe | Catatan |
+|---|---|---|
+| id | bigint | |
+| user_id | FK → users, unique | |
+| nickname | string, nullable | |
+| avatar_path | string, nullable | |
+| bio | text, nullable | |
+| hobby | json, nullable | array string |
+| favorite | json, nullable | array string |
+| fun_fact | text, nullable | |
+| birth_date | date, nullable | |
+| birth_year_visible | boolean | default `false` — tahun lahir tidak pernah dipaksa tampil |
+| birthday_visibility | enum | default `class_only` |
+| profile_visibility | enum | default `class_only` |
 
-### `profiles`
+### `events` — event countdown
 
-Relasi 1:1 dengan `users`.
+| Kolom | Tipe | Catatan |
+|---|---|---|
+| id, class_id | | |
+| title, description | | |
+| starts_at | datetime | disimpan UTC, dikonversi timezone saat ditampilkan |
+| location | string, nullable | |
+| image_path | string, nullable | |
+| organizer_id | FK → users, nullable | |
+| status | enum | `upcoming`, `ongoing`, `completed`, `cancelled` |
+| visibility | enum | |
 
-| Kolom | Tipe |
+### `posts` — social feed
+
+| Kolom | Tipe | Catatan |
+|---|---|---|
+| id, class_id | | |
+| author_id | FK → users | |
+| type | enum | `text`, `image`, `announcement`, `memory` |
+| body | text, nullable | |
+| media_path | string, nullable | |
+| visibility | enum | |
+| deleted_at | | soft delete |
+
+### `comments` — dipakai bersama untuk posts, timeline_entries, gallery_media
+
+Tabel ini **polymorphic** — satu tabel dipakai untuk komentar di banyak jenis konten (post, timeline, gallery), supaya kita tidak perlu bikin `post_comments`, `gallery_comments`, dst. terpisah.
+
+| Kolom | Tipe | Catatan |
+|---|---|---|
+| id | | |
+| commentable_id, commentable_type | | menunjuk ke konten yang dikomentari |
+| author_id | FK → users | |
+| body | text | |
+| deleted_at | | soft delete |
+
+### `reactions` — dipakai bersama untuk posts, comments, timeline_entries, gallery_media
+
+Sama seperti `comments`, ini juga polymorphic.
+
+| Kolom | Tipe | Catatan |
+|---|---|---|
+| id | | |
+| reactable_id, reactable_type | | menunjuk ke konten yang di-react |
+| user_id | FK → users | |
+| type | enum | `like` (baru satu jenis di MVP) |
+
+Kombinasi (`reactable_id`, `reactable_type`, `user_id`, `type`) dibuat **unique** — supaya satu user tidak bisa react dua kali ke konten yang sama.
+
+### `polls`, `poll_options`, `poll_votes` — polling
+
+| Tabel | Kolom penting |
 |---|---|
-| id | bigint PK |
-| user_id | FK unique |
-| nickname | string nullable |
-| avatar_path | string nullable |
-| bio | text nullable |
-| hobby | json nullable |
-| favorite | json nullable |
-| fun_fact | text nullable |
-| birth_date | date nullable |
-| birth_year_visible | boolean default false |
-| birthday_visibility | Visibility |
-| profile_visibility | Visibility |
+| `polls` | id, class_id, creator_id, question, is_anonymous, result_visibility, closes_at, status |
+| `poll_options` | id, poll_id, label |
+| `poll_votes` | id, poll_option_id, user_id — **unique per poll per user**, mencegah vote dobel |
 
-Profile sengaja tidak digabung ke `users` agar tabel authentication tetap ramping.
+### `gallery_albums`, `gallery_media`, `media_tags` — class gallery
 
-## 5. Tabel Feature
+| Tabel | Kolom penting |
+|---|---|
+| `gallery_albums` | id, class_id, title, category (`class_photo`/`event`/`campus`/`random`/`meme`/`throwback`) |
+| `gallery_media` | id, album_id, uploader_id, file_path, caption, visibility, deleted_at |
+| `media_tags` | id, gallery_media_id, tagged_user_id |
 
-### `events`
+### `timeline_entries`, `timeline_media` — class timeline
 
-`id`, `class_id`, `title`, `description`, `starts_at`, `location`, `image_path`, `organizer_id`, `status`, `visibility`.
+| Tabel | Kolom penting |
+|---|---|
+| `timeline_entries` | id, class_id, author_id, title, story, event_date, deleted_at |
+| `timeline_media` | id, timeline_entry_id, file_path |
 
-Status:
+Komentar & reaksi di timeline pakai tabel `comments`/`reactions` yang sama di atas, bukan tabel baru.
 
-```text
-upcoming
-ongoing
-completed
-cancelled
+### `achievements`, `user_achievements` — achievement system
+
+| Tabel | Kolom penting |
+|---|---|
+| `achievements` | id, class_id, code (unique, misal `first_login`), name, description, icon, trigger_type |
+| `user_achievements` | id, user_id, achievement_id, awarded_at — **unique per user per achievement** |
+
+### `reports` — moderasi, polymorphic (target: posts, comments, gallery_media, timeline_entries, profiles)
+
+| Kolom | Tipe | Catatan |
+|---|---|---|
+| id | | |
+| reportable_id, reportable_type | | konten yang dilaporkan |
+| reporter_id | FK → users | |
+| reason | text | |
+| status | enum | `pending`, `reviewed`, `dismissed` |
+| reviewed_by | FK → users, nullable | |
+
+### `audit_logs` — jejak aksi moderasi/admin
+
+| Kolom | Tipe | Catatan |
+|---|---|---|
+| id | | |
+| actor_id | FK → users | siapa melakukan aksi |
+| action | string | contoh: `report.reviewed`, `poll.closed` |
+| target_id, target_type | | |
+| meta | json, nullable | |
+
+## 5. Relationships (Ringkas)
+
+```
+User 1—1 Profile
+User 1—N ClassMembership N—1 Class
+User 1—N Post, Event(as organizer), GalleryMedia(as uploader), TimelineEntry(as author)
+Post, TimelineEntry, GalleryMedia 1—N Comment, Reaction (polymorphic)
+Poll 1—N PollOption 1—N PollVote
+GalleryAlbum 1—N GalleryMedia 1—N MediaTag
+Achievement 1—N UserAchievement N—1 User
 ```
 
-`starts_at` disimpan UTC dan dikonversi saat ditampilkan.
+## 6. Migration
 
-### `posts`
-
-`id`, `class_id`, `author_id`, `type`, `body`, `media_path`, `visibility`, `deleted_at`.
-
-Type:
-
-```text
-text
-image
-announcement
-memory
-```
-
-Event/poll/achievement dapat direferensikan di feed tanpa menduplikasi data.
-
-### `comments`
-
-Polymorphic:
-
-```text
-commentable_id
-commentable_type
-author_id
-body
-deleted_at
-```
-
-Dipakai untuk posts, timeline entries, dan gallery media.
-
-### `reactions`
-
-Polymorphic:
-
-```text
-reactable_id
-reactable_type
-user_id
-type
-```
-
-Unique:
-
-```text
-(reactable_id, reactable_type, user_id, type)
-```
-
-MVP menggunakan satu jenis reaction, misalnya `like`.
-
-### `polls`
-
-`id`, `class_id`, `creator_id`, `question`, `is_anonymous`, `result_visibility`, `closes_at`, `status`.
-
-### `poll_options`
-
-`id`, `poll_id`, `label`.
-
-### `poll_votes`
-
-`id`, `poll_id`, `poll_option_id`, `user_id`.
-
-`poll_id` sengaja didenormalisasi agar unique constraint untuk satu user per poll dapat diterapkan dengan jelas.
-
-### `gallery_albums`
-
-`id`, `class_id`, `title`, `category`.
-
-Kategori:
-
-```text
-class_photo
-event
-campus
-random
-meme
-throwback
-```
-
-### `gallery_media`
-
-`id`, `album_id`, `uploader_id`, `file_path`, `caption`, `visibility`, `deleted_at`.
-
-### `media_tags`
-
-`id`, `gallery_media_id`, `tagged_user_id`.
-
-### `timeline_entries`
-
-`id`, `class_id`, `author_id`, `title`, `story`, `event_date`, `deleted_at`.
-
-### `timeline_media`
-
-`id`, `timeline_entry_id`, `file_path`.
-
-### `achievements`
-
-`id`, `class_id`, `code`, `name`, `description`, `icon`, `trigger_type`.
-
-Trigger:
-
-```text
-event_based
-manual
-```
-
-MVP 3–5 badge dasar:
-
-- `first_login`
-- `profile_complete`
-- `historian`
-
-### `user_achievements`
-
-`id`, `user_id`, `achievement_id`, `awarded_at`.
-
-Gunakan unique constraint `(user_id, achievement_id)`.
-
-## 6. Moderation dan Audit
-
-### `reports`
-
-Polymorphic target:
-
-```text
-posts
-comments
-gallery_media
-timeline_entries
-profiles
-```
-
-Kolom utama:
-
-```text
-id
-reportable_id
-reportable_type
-reporter_id
-reason
-status
-reviewed_by
-```
-
-Status:
-
-```text
-pending
-reviewed
-dismissed
-```
-
-### `audit_logs`
-
-```text
-id
-actor_id
-action
-target_id
-target_type
-meta
-```
-
-Contoh action:
-
-```text
-report.reviewed
-poll.closed
-member.role_changed
-```
-
-Audit hanya untuk aksi penting, terutama moderasi dan perubahan role; jangan mencatat setiap request.
-
-## 7. Relationship Inti
-
-```text
-User
- ├── Profile
- └── ClassMembership
-       └── Class
-
-Class
- ├── Events
- ├── Posts
- ├── Polls
- ├── Gallery Albums
- ├── Timeline Entries
- └── Achievements
-```
-
-`comments`, `reactions`, dan `reports` menggunakan polymorphic relationship.
-
-## 8. Migration
-
-Perubahan schema harus dibuat sebagai migration:
+Setiap perubahan struktur tabel **wajib** lewat file migration baru — jangan pernah mengubah tabel manual lewat phpMyAdmin/GUI database di server, karena perubahan itu tidak akan tercatat dan tidak akan otomatis ada di komputer anggota tim lain.
 
 ```bash
-php artisan make:migration add_xxx_to_xxx_table
-php artisan migrate
+php artisan make:migration create_events_table
 ```
 
-Development lokal dapat di-reset:
+Migration baru yang menambah kolom di tabel yang sudah berisi data **harus** aman untuk data lama — kolom baru dibuat `nullable` atau punya default value, bukan langsung `NOT NULL` tanpa default.
+
+## 7. Seeder
+
+Seeder dipakai untuk mengisi database dengan data contoh saat development (lihat [`02-development.md`](./02-development.md) §5) — bukan untuk data production. Seeder MVP menyediakan: 1 kelas contoh, beberapa member dummy dengan role berbeda, beberapa post/event contoh.
 
 ```bash
-php artisan migrate:fresh --seed
+php artisan db:seed
 ```
 
-Jangan gunakan `migrate:fresh` di production.
+## 8. Example Data
 
-Migration production harus aman terhadap data yang sudah ada. Hindari menambahkan kolom `NOT NULL` tanpa default/strategi migrasi pada tabel berisi data.
+Contoh isi `class_memberships` untuk memperjelas bagaimana role & status dipakai:
 
-## 9. Seeder
+| user_id | class_id | role | status |
+|---|---|---|---|
+| 1 | 1 | class_admin | active |
+| 2 | 1 | moderator | active |
+| 3 | 1 | member | active |
+| 4 | 1 | member | alumni |
 
-Seeder menyediakan data dummy minimal:
+## 9. Rules
 
-- satu class contoh,
-- beberapa member,
-- beberapa profile,
-- beberapa post/event/poll jika implementasi sudah tersedia.
+- Query **tidak boleh** melewati global scope `class_id` — jangan pakai `DB::table()` mentah tanpa filter kelas kecuali benar-benar diperlukan dan sudah didiskusikan.
+- Field sensitif (birthday, kontak) **selalu** dicek `visibility`-nya sebelum ditampilkan ke user lain.
+- Jangan hapus data secara permanen (`forceDelete`) untuk tabel yang pakai soft delete, kecuali memang diminta eksplisit — prinsip *Memory Forever* berarti data kenangan tidak boleh gampang hilang.
+- Unique constraint (vote, reaction, achievement) tidak boleh dilewati dengan validasi di level aplikasi saja — harus benar-benar jadi constraint di database.
 
-Tujuannya agar developer dapat langsung mencoba feature.
+## 10. Cara Menambah/Mengubah Struktur Database
 
-## 10. Data P1+ Tidak Dibuat Sekarang
-
-Tidak ada tabel MVP untuk:
-
-- Confession
-- Class Finance
-- Time Capsule
-
-Schema dibuat saat feature benar-benar dikerjakan. Jangan membuat tabel kosong hanya untuk "persiapan masa depan".
-
-## 11. Rule yang Wajib Dijaga
-
-### `class_id` scoping
-
-Setiap query data kelas harus memastikan record berasal dari kelas yang sedang diakses user.
-
-### Unique constraint
-
-Gunakan database constraint untuk aturan seperti:
-
-- membership user-class,
-- reaction user-target,
-- vote user-poll,
-- achievement user.
-
-### Soft delete
-
-Post, gallery media, timeline, dan konten yang memang memerlukan pemulihan dapat menggunakan soft delete.
-
-### Privacy
-
-Data sensitif jangan diberikan dari query/presenter jika viewer tidak berhak.
-
-## 12. Storage
-
-Database menyimpan **path file**, bukan binary file.
-
-Detail storage ada di [`05-deployment.md`](05-deployment.md).
+1. Diskusikan dulu di issue kalau perubahan memengaruhi tabel yang sudah dipakai fitur lain
+2. Buat migration baru (`php artisan make:migration ...`)
+3. Update Model terkait (`$fillable`, relationship)
+4. Kalau perlu, update seeder supaya data contoh tetap konsisten
+5. Jalankan `php artisan migrate` di lokal, pastikan tidak error
+6. Commit migration + perubahan Model dalam PR yang sama, jangan terpisah

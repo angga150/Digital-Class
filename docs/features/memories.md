@@ -1,55 +1,71 @@
-# Class Timeline & On This Day (Memories)
+# Class Timeline & Memories
 
-> **Status:** ✅ Spesifikasi final. Referensi produk: [`product/02-problem-solution-feature-mapping.md`](../02-problem-solution-feature-mapping.md) §D2 (Timeline, P0) dan §D4 (On This Day, P2).
+## Status
 
-Dokumen ini adalah spesifikasi kerja untuk feature **Class Timeline & On This Day (Memories)**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
+Class Timeline: Planned (belum diimplementasi)
+On This Day: Idea (belum dijadwalkan — lihat alasan di bawah)
 
-## Cara Membaca
+## Tujuan
 
-Urutan praktis:
+**Class Timeline** — arsip perjalanan kelas dari semester ke semester, disusun kronologis. Ini salah satu fitur pembeda utama produk ini dari website kelas biasa.
 
-1. Pahami tujuan dan user flow.
-2. Periksa business rules dan permission.
-3. Lihat data model.
-4. Implement backend + Livewire + UI.
-5. Tangani validation dan edge cases.
-6. Tambahkan test untuk logic kritikal.
-7. Update dokumentasi bila ada perubahan keputusan.
+**On This Day** — nanti akan menampilkan kembali kenangan lama secara otomatis di tanggal yang sama tahun sebelumnya. **Belum dikerjakan di MVP** karena nilainya baru terasa setelah ada data historis minimal 1 tahun — dikerjakan sekarang hanya akan jadi fitur kosong tanpa isi.
 
-## User Flow — Class Timeline (P0)
+## User Flow (Class Timeline)
 
-1. Member menambah entri timeline: judul, cerita singkat, tanggal kejadian, foto pendukung.
-2. Timeline ditampilkan kronologis (grouped by tahun), bisa dikomentari & di-react.
-3. Entri tidak butuh approval sebelum tayang (Community Owned) — moderasi bersifat reaktif (report), bukan preventif (approval), agar tidak menghambat spontanitas dokumentasi.
+```
+Member tambah entri timeline: judul, cerita singkat, tanggal kejadian, foto pendukung
+  ↓
+Entri langsung tayang (tanpa approval dulu)
+  ↓
+Ditampilkan kronologis, dikelompokkan per tahun
+  ↓
+User lain bisa comment & react
+```
 
-## User Flow — On This Day (P2, belum diimplementasi di MVP)
+## Business Rules
 
-Query harian: cari `timeline_entries`/`gallery_media`/`posts` dengan `event_date`/`created_at` di tanggal-bulan yang sama dari tahun-tahun sebelumnya. **Tidak dibangun di MVP** karena data historis belum cukup untuk bernilai (lihat rasional di `../01-product.md` §D4) — bagian ini didokumentasikan sebagai referensi struktur query untuk nanti, bukan untuk dikerjakan sekarang.
+- Entri timeline **tidak butuh approval** sebelum tayang — sama seperti Social Feed, moderasi bersifat reaktif (report), bukan preventif.
+- `event_date` harus tanggal yang **sudah terjadi**, tidak boleh di masa depan (beda dari `events` yang memang untuk rencana ke depan).
+- Entri boleh tanpa foto (cerita teks saja tetap valid).
 
-## Data Model
+## Database
 
-Tabel `timeline_entries`, `timeline_media` — lihat [`../04-database.md`](../04-database.md). Comment & reaction memakai tabel polymorphic yang sama dengan Post/Gallery.
+Tabel `timeline_entries`, `timeline_media`. Comment & reaction pakai tabel polymorphic yang sama dengan Social Feed. Lihat [`../04-database.md`](../04-database.md).
 
-## API
+## Backend
 
-`GET/POST /api/v1/timeline` — lihat [`../03-architecture.md`](../03-architecture.md). Endpoint On This Day belum didefinisikan — akan ditambahkan saat fitur ini masuk kerja aktif.
+- `TimelineEntryPolicy@create` — semua role login berstatus `active`.
+- Delete: author sendiri atau Moderator/Class Admin.
 
-## Edge Case & Validasi
+## Frontend
 
-- `event_date` di masa depan → ditolak validasi (timeline adalah kejadian yang sudah terjadi, bukan rencana — beda dari `events`).
-- Entri tanpa foto → tetap valid (cerita teks saja diperbolehkan).
+- Tampilan vertical timeline, dikelompokkan per tahun
+- Form tambah entri: judul, cerita, tanggal, upload foto (opsional)
 
 ## Permission
 
 Create: semua role login berstatus `active`. Delete: author sendiri atau Moderator/Class Admin.
 
+## Validation
+
+- `event_date` wajib diisi, tidak boleh di masa depan
+- `title` wajib diisi
+
+## Edge Cases
+
+- Dua entri di tanggal yang sama → dua-duanya tampil, diurutkan berdasarkan waktu dibuat
+
 ## Testing
 
-Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+Tidak perlu test kompleks di MVP — cukup pastikan `event_date` di masa depan ditolak validasi.
 
-## Related Documentation
+## Related Features
 
-- [Product](../01-product.md)
-- [Development](../02-development.md)
-- [Architecture](../03-architecture.md)
-- [Database](../04-database.md)
+Class Gallery, Social Feed, Moderation
+
+---
+
+## Catatan untuk On This Day (referensi saat dikerjakan nanti)
+
+Query dasarnya: cari `timeline_entries`/`gallery_media`/`posts` dengan tanggal (bulan+hari) yang sama dengan hari ini, dari tahun-tahun sebelumnya. Baru masuk roadmap kalau data historis sudah cukup — lihat [`../01-product.md`](../01-product.md) §10.

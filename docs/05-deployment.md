@@ -1,198 +1,120 @@
 # Deployment
 
-## 1. Prinsip
+Dokumen ini menjelaskan cara project ini di-deploy — tetap sederhana, tidak ada infrastruktur kompleks yang tidak dibutuhkan di skala project ini.
 
-Deployment MVP harus sederhana.
+## 1. Alur Umum
 
-```text
-Local Development
-      ↓
-Testing
-      ↓
-Production
+```
+Local Development (laptop masing-masing)
+  ↓
+Testing (php artisan test, test manual di browser)
+  ↓
+Production (server yang diakses kelas sungguhan)
 ```
 
-Staging boleh digunakan jika tim punya kapasitas, tetapi tidak wajib untuk MVP awal.
+Tidak ada staging environment formal wajib di MVP — kalau tim punya waktu, boleh ditambahkan, tapi tidak wajib untuk mulai deploy.
 
-## 2. Hosting
+## 2. Tempat Hosting
 
-MVP dapat dijalankan di:
+Pilih salah satu, sesuai kenyamanan tim:
 
-- VPS murah, atau
-- PaaS sederhana.
+| Opsi | Kapan cocok |
+|---|---|
+| VPS murah (misalnya lewat panel seperti Laravel Forge/Ploi, atau setup manual) | Tim mau belajar sedikit server admin, ingin kontrol penuh |
+| PaaS (Platform-as-a-Service, misalnya Railway atau Render) | Tim mau deploy cepat tanpa urus server sendiri |
 
-Jangan membangun infrastruktur AWS/GCP multi-service, Kubernetes, atau orchestration kompleks sebelum ada kebutuhan nyata.
+Dua-duanya sama-sama valid untuk Laravel biasa — tidak ada yang "lebih benar", pilih yang tim paling nyaman jalankan.
 
-## 3. Production Environment
+## 3. Environment Variables di Production
 
-`.env` production tidak pernah masuk Git.
+`.env` production **tidak pernah** ikut di-commit ke Git. Diisi manual langsung di server (lewat SSH) atau lewat dashboard environment variable di PaaS. Pastikan minimal ini diisi benar:
 
-Environment variables dikelola langsung di hosting.
-
-Minimal perhatikan:
-
-- `APP_ENV`
-- `APP_KEY`
-- `APP_URL`
-- database credentials
-- mail configuration jika digunakan
-- storage configuration
-
-## 4. Deploy Manual MVP
-
-Setelah PR di-merge dan kode diperiksa:
-
-```bash
-git pull origin main
-composer install --no-dev --optimize-autoloader
-npm install
-npm run build
-php artisan migrate
-php artisan optimize
+```env
+APP_ENV=production
+APP_DEBUG=false
+DB_DATABASE=...
+DB_USERNAME=...
+DB_PASSWORD=...
 ```
 
-Command dapat disesuaikan dengan hosting.
+`APP_DEBUG=false` **wajib** di production — kalau dibiarkan `true`, error Laravel akan menampilkan detail kode/struktur database ke publik.
 
-**Jangan menjalankan `migrate:fresh` di production.**
+## 4. Database
 
-## 5. Database
-
-Migration production:
+1. Buat database MySQL di server production (bukan yang sama dengan lokal)
+2. Set kredensialnya di `.env` production
+3. Jalankan migration (**bukan** `migrate:fresh`, karena itu menghapus semua data yang sudah ada):
 
 ```bash
 php artisan migrate
 ```
 
-Pastikan migration baru tidak merusak data existing.
+4. Backup database dilakukan **harian** — penting khusus untuk project ini karena data yang hilang (foto, timeline, post) berarti kenangan kelas yang hilang permanen, bukan sekadar downtime teknis. Cara backup mengikuti fasilitas yang disediakan hosting (kebanyakan VPS panel dan PaaS punya fitur backup otomatis).
 
-Backup database sebelum perubahan berisiko.
+## 5. Storage (Foto & Media)
 
-## 6. Storage
+MVP menyimpan foto (avatar, gallery, timeline) di **local disk** server — cukup untuk kebutuhan satu kelas kecil di awal. Kalau nanti disk server mulai penuh (>70% terpakai) atau traffic mulai naik, pindah ke object storage (misalnya Cloudflare R2 atau AWS S3) — tinggal ganti konfigurasi `.env`, kode tidak perlu diubah karena kita pakai Laravel Filesystem (bukan path manual).
 
-### MVP awal
-
-Gunakan local storage Laravel:
-
-```text
-storage/app/public/
-```
-
-Path yang digunakan:
-
-```text
-avatars/{user_id}/{filename}
-posts/{class_id}/{filename}
-gallery/{class_id}/{album_id}/{filename}
-timeline/{class_id}/{filename}
-events/{class_id}/{filename}
-```
-
-Jalankan:
+Sebelum deploy pertama kali, jalankan:
 
 ```bash
 php artisan storage:link
 ```
 
-### Validasi Upload
+Supaya folder `storage/app/public` bisa diakses lewat browser.
 
-File foto:
+## 6. Build Frontend
 
-```text
-jpg
-jpeg
-png
-webp
+Sebelum deploy, build asset Tailwind/CSS untuk production (bukan mode development):
+
+```bash
+npm run build
 ```
 
-Maksimum:
+Ini beda dari `npm run dev` yang dipakai saat development — `build` menghasilkan file yang sudah dioptimasi (diperkecil ukurannya) untuk production.
 
-```text
-5 MB per file
+## 7. Cache
+
+Setelah deploy kode baru, jalankan ini supaya Laravel lebih cepat (cache config, route, view):
+
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 ```
 
-Video `mp4` tidak termasuk MVP.
+**Penting:** kalau kamu habis mengubah `.env`, jalankan `php artisan config:clear` dulu sebelum `config:cache` lagi — kalau tidak, perubahan `.env` tidak akan kepakai.
 
-Validasi wajib di server. Client-side validation hanya membantu UX.
+## 8. Queue
 
-Resize/thumbnail dapat digunakan untuk gallery agar koneksi kampus tidak harus mengunduh file original setiap saat.
+MVP **tidak** memakai queue worker terpisah — semua proses (kirim notifikasi in-app, dsb.) dijalankan langsung (synchronous), bukan di background. Ini cukup untuk skala satu kelas. Queue baru dipertimbangkan kalau ada proses berat yang bikin user menunggu lama (misalnya proses gambar dalam jumlah besar).
 
-### Kapan pindah object storage?
+## 9. Deployment Checklist
 
-Pertimbangkan object storage S3-compatible ketika:
-
-- disk VPS >70%, atau
-- production sungguhan sudah dimulai dan storage lokal menjadi risiko.
-
-Database tetap hanya menyimpan path.
-
-## 7. Retensi Media
-
-Konten soft-deleted tidak langsung menghapus file fisik.
-
-File dapat dibersihkan oleh scheduled cleanup setelah masa pemulihan, misalnya sekitar 90 hari, jika implementasi cleanup sudah dibuat.
-
-Ini mendukung prinsip **Memory Forever** tanpa membuat storage tumbuh tanpa batas.
-
-## 8. HTTPS
-
-HTTPS wajib di production karena aplikasi menangani:
-
-- login,
-- data pribadi,
-- birthday,
-- upload,
-- interaksi kelas.
-
-Gunakan SSL/HTTPS yang tersedia dari hosting, misalnya Let's Encrypt.
-
-## 9. Monitoring Minimal
-
-MVP cukup menggunakan:
-
-- Laravel logs,
-- uptime monitoring sederhana.
-
-Tidak perlu APM berbayar sebelum skala membutuhkan.
-
-## 10. CI
-
-GitHub Actions dapat menjalankan satu job test pada Pull Request:
-
-```text
-checkout
-  ↓
-setup PHP
-  ↓
-composer install
-  ↓
-php artisan test
+```
+[ ] .env production sudah diisi benar, APP_DEBUG=false
+[ ] Database sudah dibuat & migration sudah dijalankan (bukan migrate:fresh)
+[ ] php artisan storage:link sudah dijalankan
+[ ] npm run build sudah dijalankan (bukan npm run dev)
+[ ] Cache config/route/view sudah di-generate ulang
+[ ] HTTPS aktif (SSL) — wajib karena ada form login & data pribadi
+[ ] Backup database sudah aktif
 ```
 
-CI tidak perlu langsung menjadi pipeline deploy penuh.
+## 10. Proses Deploy (Manual di MVP)
 
-Auto-deploy dipertimbangkan setelah test dan staging sudah stabil.
+Deploy dilakukan manual setelah PR di-merge ke `main` dan sudah dicek — bukan auto-deploy otomatis begitu merge. Alasannya: tim kecil, frekuensi deploy tidak tinggi, dan auto-deploy tanpa staging environment berisiko fitur yang belum matang langsung live ke kelas sungguhan.
 
-## 11. Deployment Checklist
+Langkah umum di server:
 
-- [ ] `.env` production sudah dikonfigurasi.
-- [ ] `APP_KEY` tersedia.
-- [ ] Database production tersedia.
-- [ ] HTTPS aktif.
-- [ ] `php artisan migrate` berhasil.
-- [ ] Frontend sudah di-build.
-- [ ] `storage:link` tersedia jika memakai local storage.
-- [ ] File upload dapat digunakan.
-- [ ] Login dan email verification berjalan.
-- [ ] Permission diuji.
-- [ ] Backup tersedia.
-- [ ] Log dapat diperiksa.
+```bash
+git pull origin main
+composer install --no-dev
+npm install && npm run build
+php artisan migrate
+php artisan config:cache
+```
 
-## 12. Catatan Keamanan
+## 11. Monitoring
 
-Jangan:
-
-- commit `.env`,
-- menaruh password di source code,
-- memakai `migrate:fresh` di production,
-- membuka storage private secara publik tanpa authorization,
-- menerima file upload tanpa validasi.
+Cukup pakai layanan uptime check gratis (misalnya UptimeRobot) untuk tahu kalau situs down — tidak perlu tools monitoring berbayar/kompleks di skala project ini.

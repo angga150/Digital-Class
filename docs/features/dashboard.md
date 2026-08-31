@@ -1,51 +1,64 @@
-# Class Dashboard
+# Dashboard
 
-> **Status:** ✅ Spesifikasi final. Referensi produk: [`product/02-problem-solution-feature-mapping.md`](../02-problem-solution-feature-mapping.md) §"HOME / CLASS DASHBOARD".
+## Status
 
-Dokumen ini adalah spesifikasi kerja untuk feature **Class Dashboard**. Developer yang mendapat task ini seharusnya dapat membaca dokumen ini lalu mulai coding tanpa perlu membaca seluruh dokumentasi repository.
+Planned (belum diimplementasi)
 
-## Cara Membaca
+## Tujuan
 
-Urutan praktis:
-
-1. Pahami tujuan dan user flow.
-2. Periksa business rules dan permission.
-3. Lihat data model.
-4. Implement backend + Livewire + UI.
-5. Tangani validation dan edge cases.
-6. Tambahkan test untuk logic kritikal.
-7. Update dokumentasi bila ada perubahan keputusan.
+Halaman pertama yang dilihat user setelah login. Tujuannya memberi alasan nyata bagi mahasiswa untuk membuka website **setiap hari** — bukan cuma saat butuh info formal. Menampilkan info yang "terasa hidup": ulang tahun terdekat, event terdekat, aktivitas terbaru, polling aktif, achievement terbaru.
 
 ## User Flow
 
-1. User login → landing page adalah dashboard (bukan feed atau halaman kosong).
-2. Dashboard menampilkan widget: sapaan bernama, birthday terdekat, event countdown, aktivitas terbaru, polling aktif, achievement terbaru.
-3. Setiap widget adalah Livewire component independen (`DashboardGreeting`, `DashboardBirthday`, dst.) — bukan satu component monolitik — agar bisa di-lazy-load dan tidak saling blocking saat query lambat.
+```
+User login
+  ↓
+Diarahkan langsung ke Dashboard (bukan feed atau halaman kosong)
+  ↓
+Melihat: sapaan, birthday terdekat, event countdown, aktivitas terbaru,
+         polling aktif, achievement terbaru
+  ↓
+Klik salah satu widget → diarahkan ke halaman detail terkait
+```
 
-## Data Model
+## Business Rules
 
-Tidak ada tabel `dashboard` sendiri — ini adalah view agregat dari tabel lain. Lihat [`../04-database.md`](../04-database.md): `profiles` (birthday), `events`, `posts`, `polls`, `user_achievements`.
+- Dashboard bukan tabel tersendiri di database — ini adalah gabungan (agregat) dari data fitur lain (profil, event, post, poll, achievement).
+- Kalau kelas masih baru dan belum ada aktivitas, tampilkan pesan ramah ("Belum ada aktivitas, jadilah yang pertama posting!"), bukan widget kosong tanpa penjelasan.
+- Semua widget tetap menghormati `visibility` masing-masing data — dashboard tidak boleh jadi celah yang menampilkan data yang seharusnya tersembunyi.
 
-## API
+## Database
 
-`GET /api/v1/dashboard` — lihat [`../03-architecture.md`](../03-architecture.md) §Dashboard. Untuk web (Livewire), tiap widget query langsung ke model terkait, tidak melalui endpoint API ini.
+Tidak ada tabel baru. Mengambil data dari: `profiles` (birthday), `events`, `posts`, `polls`, `user_achievements`. Lihat [`../04-database.md`](../04-database.md).
 
-## Edge Case & Validasi
+## Backend
 
-- Kelas baru tanpa data historis (belum ada post/event) → tampilkan empty state yang tetap ramah ("Belum ada aktivitas, jadilah yang pertama posting!"), bukan widget kosong tanpa penjelasan.
-- Semua widget menghormati `visibility` milik masing-masing record — dashboard tidak boleh jadi celah yang menampilkan data yang seharusnya tersembunyi.
+- Buat Livewire component terpisah untuk tiap widget (`DashboardGreeting`, `DashboardBirthday`, `DashboardEvent`, dst.) — bukan satu component besar, supaya query lambat di satu widget tidak memblokir widget lain.
+- Tiap widget query data terbaru sesuai kebutuhannya sendiri (misal: birthday terdekat = urutkan `birth_date` terhitung dari tanggal hari ini).
+
+## Frontend
+
+- Layout grid (card-based), 1 kolom di mobile, beberapa kolom di desktop (lihat prinsip mobile-first di [`../03-architecture.md`](../03-architecture.md)).
+- Tiap widget pakai `<x-card>`.
+- Widget yang datanya kosong tampilkan `<x-empty-state>`, bukan card kosong tanpa teks.
 
 ## Permission
 
-Semua role yang login (member ke atas) bisa melihat dashboard. Konten tiap widget tetap difilter sesuai visibility & role masing-masing (lihat [`../03-architecture.md`](../03-architecture.md)).
+Semua role yang sudah login (Member ke atas) bisa melihat dashboard. Isi tiap widget tetap difilter sesuai visibility & role.
+
+## Validation
+
+Tidak ada input user langsung di halaman ini (murni tampilan data).
+
+## Edge Cases
+
+- Tidak ada birthday dalam 30 hari ke depan → widget tampilkan pesan netral, bukan disembunyikan total (supaya layout tidak "meloncat").
+- User baru gabung, belum ada achievement sama sekali → tampilkan pesan ajakan ("Lengkapi profil untuk dapat badge pertamamu!").
 
 ## Testing
 
-Prioritaskan happy path, validation error, permission/visibility, dan edge case yang berisiko mengubah data atau membocorkan data.
+Tidak perlu test kompleks — cukup pastikan tiap widget menghormati visibility (test manual dengan role berbeda cukup di MVP).
 
-## Related Documentation
+## Related Features
 
-- [Product](../01-product.md)
-- [Development](../02-development.md)
-- [Architecture](../03-architecture.md)
-- [Database](../04-database.md)
+Birthday System, Event Countdown, Social Feed, Polling, Achievement System — dashboard menampilkan ringkasan dari semuanya.

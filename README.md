@@ -1,124 +1,79 @@
 # Digital Class Universe
 
-Website digital untuk kelas mahasiswa: tempat melihat informasi kelas, berinteraksi, menyimpan foto, dan mengabadikan kenangan bersama.
+Website digital untuk kelas mahasiswa — pusat informasi, interaksi, identitas, keseruan, dan arsip kenangan kelas dari hari pertama kuliah sampai setelah lulus.
 
-> **Prinsip utama:** *Fun First, Useful Second, Memory Forever, Privacy First.*
+## ✨ About
 
-## ✨ Tentang Project
+Bukan sekadar website kelas formal (jadwal, pengumuman) dan bukan media sosial penuh. Digital Class Universe adalah tempat berkumpul digital kelas — kombinasi ringan dari Class Hub, Social Space, dan Digital Scrapbook. Dibuat sebagai project tugas kelompok, tapi diperlakukan sebagai real software project: rapi, terdokumentasi, dan bisa dikembangkan lanjut.
 
-Digital Class Universe dibuat untuk menjadi "rumah digital" satu kelas. Project ini adalah project tugas kelompok mahasiswa, sehingga arsitekturnya sengaja dibuat sederhana, mudah dipelajari, dan tetap sehat untuk dikembangkan.
+## 🚀 Features
 
-MVP ditujukan untuk **satu kelas**, tetapi data dan kode tidak boleh dikunci secara hardcode ke satu kelas.
+- **Class Dashboard** — info penting kelas dalam satu layar
+- **Birthday System** — countdown ulang tahun teman sekelas
+- **Event Countdown** — UTS, UAS, wisuda, acara kelas
+- **Member Profile** — profil santai, bukan CV
+- **Social Feed** — post, komentar, reaksi
+- **Polling** — voting dengan hasil yang valid (satu user, satu vote)
+- **Class Gallery** — arsip foto kelas
+- **Class Timeline** — perjalanan kelas dari semester ke semester
+- **Achievement** — badge ringan untuk kontribusi positif
+- **Moderation** — report & moderasi konten yang aman
 
-## 🚀 Fitur MVP
-
-- Authentication dan membership kelas
-- Class Dashboard
-- Academic Corner minimal
-- Birthday System
-- Event Countdown
-- Member Profile
-- Social Feed
-- Polling / Voting
-- Class Gallery
-- Class Timeline
-- Achievement System
-- Moderation dan privacy control
-- In-app notification minimal
-
-Fitur P1/P2 seperti Confession, Class Finance, Time Capsule, Hall of Fame, On This Day, dan Random/Fun Features tidak menjadi fokus MVP.
+Daftar lengkap & prioritas fitur: [`docs/01-product.md`](./docs/01-product.md)
 
 ## 🛠 Tech Stack
 
-- **Laravel** — application/backend framework
-- **Livewire** — interactive UI
-- **Blade** — server-rendered views
+- **Laravel** — backend & application logic
+- **Livewire** — UI interaktif
 - **Tailwind CSS** — styling
-- **Alpine.js** — hanya jika interaksi kecil memang membutuhkannya
 - **MySQL** — database
 
-Arsitektur: **Monolithic Laravel Application dengan Livewire**.
-
-Tidak ada React, Vue, Inertia, SPA, microservices, Kubernetes, atau API-first architecture di MVP.
+Detail arsitektur: [`docs/03-architecture.md`](./docs/03-architecture.md)
 
 ## 💻 Quick Start
 
-> Source code Laravel berada di `src/`.
-
 ```bash
-git clone <URL-REPOSITORY>
-cd digital-class-universe
-cd src
-
-composer install
-npm install
-
+git clone https://github.com/angga150/Digital-Class.git
+cd digital-class/src
+composer install && npm install
 cp .env.example .env
 php artisan key:generate
-
-# Buat database MySQL lalu isi DB_* di .env
+# sesuaikan koneksi database di .env, lalu:
 php artisan migrate --seed
-
-# Terminal 1
-php artisan serve
-
-# Terminal 2
-npm run dev
 ```
 
-Windows yang tidak memiliki `cp` dapat menyalin `.env.example` menjadi `.env` secara manual.
+Jalankan di dua terminal:
 
-Penjelasan setup lengkap dan troubleshooting ada di [`docs/02-development.md`](docs/02-development.md).
-
-## 📚 Dokumentasi
-
-| Dokumen | Untuk apa? |
-|---|---|
-| [`01-product.md`](docs/01-product.md) | Memahami produk, user, role, privacy, MVP, roadmap |
-| [`02-development.md`](docs/02-development.md) | Setup project dan workflow coding harian |
-| [`03-architecture.md`](docs/03-architecture.md) | Memahami cara aplikasi disusun |
-| [`04-database.md`](docs/04-database.md) | Memahami tabel, relasi, migration, dan aturan data |
-| [`05-deployment.md`](docs/05-deployment.md) | Menjalankan aplikasi di production |
-| [`features/`](docs/features/) | Spesifikasi masing-masing fitur |
-
-### Kalau mendapat task...
-
-Contoh: **"Kerjakan Birthday Countdown."**
-
-Cukup:
-
-```text
-README
-  ↓
-docs/02-development.md
-  ↓
-docs/features/birthdays.md
-  ↓
-coding → test → commit → PR
+```bash
+php artisan serve   # terminal 1
+npm run dev          # terminal 2
 ```
 
-Tidak perlu membaca semua dokumentasi.
+Buka `http://localhost:8000`. Panduan lengkap & troubleshooting: [`docs/02-development.md`](./docs/02-development.md)
+
+## 📚 Documentation
+
+| Dokumen                                                | Isi                                                            |
+| ------------------------------------------------------ | -------------------------------------------------------------- |
+| [`docs/01-product.md`](./docs/01-product.md)           | Visi, masalah, solusi, fitur, roles, privacy, roadmap          |
+| [`docs/02-development.md`](./docs/02-development.md)   | Setup project & workflow mengerjakan fitur                     |
+| [`docs/03-architecture.md`](./docs/03-architecture.md) | Stack, cara kerja sistem, security basics                      |
+| [`docs/04-database.md`](./docs/04-database.md)         | Skema database & relasi antar tabel                            |
+| [`docs/05-deployment.md`](./docs/05-deployment.md)     | Cara deploy ke production                                      |
+| [`docs/features/`](./docs/features/)                   | Spesifikasi tiap fitur (baca sebelum mengerjakan task terkait) |
 
 ## 👥 Team
 
-Repository bersifat **private/team repository**. Anggota tim yang sudah dikenal ditambahkan sebagai collaborator.
+Diisi oleh anggota tim project.
 
-Cara bekerja bersama ada di [`CONTRIBUTING.md`](CONTRIBUTING.md).
+## 📌 Extension VS Code disarankan diinstall
 
-## 📌 Status Project
+| Extension                                    | Author           |
+| -------------------------------------------- | ---------------- |
+| 🟢 Mobile Preview - Phone & Tablet Simulator | by Lirobi        |
+| 🟢 Tailwind CSS IntelliSense                 | by Tailwind Labs |
+| 🟢 Markdown Preview Mermaid Support          | by Matt Bierner  |
 
-**MVP — dalam pengembangan.**
+## License
 
-Roadmap utama menggunakan empat status sederhana:
-
-- **Now** — sedang dikerjakan
-- **Next** — berikutnya
-- **Later** — setelah MVP
-- **Ideas** — eksperimen masa depan
-
-## Prinsip Dokumentasi
-
-> **Professional ≠ Complicated.**  
-> **Simple ≠ Unprofessional.**
-
-Dokumentasi ini dibuat supaya developer dapat menemukan jawaban dan tahu langkah berikutnya tanpa membaca puluhan file.
+[MIT](./LICENSE)
