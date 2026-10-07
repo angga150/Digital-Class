@@ -19,6 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Service provider kosong - Livewire Volt di-handle di routes
     }
 }

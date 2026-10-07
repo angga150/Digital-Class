@@ -3,19 +3,36 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     /**
      * Get the attributes that should be cast.
@@ -28,5 +45,45 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function classMemberships(): HasMany
+    {
+        return $this->hasMany(ClassMember::class);
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function postLikes(): HasMany
+    {
+        return $this->hasMany(PostLike::class);
+    }
+
+    public function postComments(): HasMany
+    {
+        return $this->hasMany(PostComment::class);
+    }
+
+    public function createdEvents(): HasMany
+    {
+        return $this->hasMany(Event::class, 'created_by');
+    }
+
+    public function eventRsvps(): HasMany
+    {
+        return $this->hasMany(EventRsvp::class);
+    }
+
+    public function createdPolls(): HasMany
+    {
+        return $this->hasMany(Poll::class, 'created_by');
+    }
+
+    public function pollVotes(): HasMany
+    {
+        return $this->hasMany(PollVote::class);
     }
 }

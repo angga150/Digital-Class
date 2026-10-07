@@ -2,7 +2,17 @@
 
 ## Status
 
-Planned (belum diimplementasi)
+UI demo diimplementasikan (6 Oktober 2026); integrasi data dan autentikasi masih planned.
+
+Dashboard memakai halaman Livewire, komponen Blade di `src/resources/views/components/dashboard/`, Tailwind CSS, dan Alpine bawaan Livewire untuk interaksi demo. Desain mengacu pada `docs/design/dashboard-concept-v1.png`.
+
+- Layout desktop dengan sidebar; HP dengan navigasi bawah dan kartu kabar sebelum feed.
+- Pengumuman, agenda, ulang tahun, cerita, polling, dan album memakai data contoh. Tanggal contoh mengikuti waktu Asia/Jakarta.
+- Tulis cerita, komentar, suka, penanda, pencarian data contoh, dan voting berjalan sebagai simulasi sementara di browser. Tidak ada penyimpanan database/local storage, unggah, login, atau request mutasi produksi; refresh mengembalikan demo ke kondisi awal.
+- Dialog menggunakan elemen native `dialog` (focus trap, Escape), label form, status/error yang dapat dibaca pembaca layar, dan dukungan reduced motion.
+- Foto ilustrasi AI tersimpan lokal di `src/public/img/dashboard/campus-friends.png`; bukan foto anggota asli.
+
+Spesifikasi di bawah tetap merupakan target fitur produksi. Sebelum mengganti data contoh dengan data asli, implementasikan auth, membership, visibility, Policy, dan validasi server. Interaksi Alpine demo bukan pengganti aturan bisnis tersebut.
 
 ## Tujuan
 

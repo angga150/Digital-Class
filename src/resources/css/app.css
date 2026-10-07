@@ -1,11 +1,46 @@
 @import "tailwindcss";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans:
-        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
-        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-        "Noto Color Emoji";
+    --font-sans: "Instrument Sans", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+    --font-story: "Segoe Print", "Bradley Hand", cursive;
+    --color-paper: #faf8f3;
+    --color-ink: #292c28;
+    --color-muted: #73756d;
+    --color-line: #eceae3;
+    --color-orange: #ed7138;
+    --color-orange-dark: #b94417;
+    --color-sage: #eaf0e2;
+}
+
+@layer base {
+    html { scroll-behavior: smooth; scroll-padding-top: 6.5rem; }
+    body { @apply bg-paper text-ink antialiased; }
+    button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
+    button:not(:disabled), summary { cursor: pointer; }
+    button:disabled { cursor: not-allowed; }
+    :focus-visible { outline: 3px solid #b94417; outline-offset: 4px; }
+    ::selection { background: #ffe1c6; }
+    [x-cloak] { display: none !important; }
+    dialog { margin: auto; }
+    dialog::backdrop { background: rgb(35 39 32 / 42%); backdrop-filter: blur(5px); }
+    body:has(dialog[open]) { overflow: hidden; }
+}
+@layer components {
+    .card { @apply rounded-3xl border border-line bg-white shadow-[0_3px_14px_-10px_#5b5140]; }
+    .primary-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#c64e20] px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-dark disabled:opacity-50; }
+    .quiet-button { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-orange-dark transition hover:bg-orange/10; }
+    .icon-button { @apply inline-flex size-11 shrink-0 items-center justify-center rounded-xl text-muted transition hover:bg-black/5 hover:text-ink; }
+    .field { @apply w-full rounded-xl border border-line bg-paper px-4 py-3 text-sm text-ink placeholder:text-muted focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/20; }
+    .nav-item { @apply flex min-h-12 items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted transition hover:bg-orange/5 hover:text-orange-dark; }
+    .nav-item.is-active { @apply bg-[#fff0e5] font-semibold text-orange-dark; }
+    .paper-grid { background-image: radial-gradient(#c9af812a 1px, transparent 1px); background-size: 9px 9px; }
+    .tape { @apply absolute -top-3 left-1/2 z-10 h-7 w-20 -translate-x-1/2 -rotate-3 bg-[#e3c790]/75; clip-path: polygon(3% 0, 97% 4%, 100% 95%, 0 100%); }
+    .modal-heading { @apply text-2xl font-bold tracking-tight; }
+}
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
