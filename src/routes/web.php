@@ -52,6 +52,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         Route::get('/feed', Feed::class)->name('feed');
         Route::get('/events', Index::class)->name('events');
         Route::get('/events/{event}', Detail::class)->name('events.show');
+        Route::get('/polls', App\Livewire\Polling\Index::class)->name('polls');
         Route::livewire('/gallery', 'pages::gallery')->name('gallery');
         Route::get('/profile', EditProfile::class)->name('profile');
         Route::get('/members', MemberDirectory::class)->name('members');

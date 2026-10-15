@@ -66,24 +66,7 @@ new #[Layout('layouts.dashboard')] class extends Component
 
             <livewire:agenda.next-event />
 
-            <section class="card p-5" aria-labelledby="poll-heading">
-                <h2 id="poll-heading" class="mb-4 flex items-center gap-2 text-sm font-semibold"><x-icon name="chart" :size="17" />Suara kelas</h2>
-                <form @submit.prevent="vote()">
-                    <fieldset :disabled="voted">
-                        <legend class="mb-3 text-sm font-semibold leading-6">Mau kumpul di mana Jumat ini?</legend>
-                        <div class="space-y-2" x-show="!voted">
-                            <label class="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border border-line px-3 text-sm transition hover:bg-paper" :class="pollChoice === 'taman' ? 'border-orange bg-orange/5' : ''"><input type="radio" name="poll" value="taman" x-model="pollChoice" required class="size-4 accent-orange-dark">Taman kampus</label>
-                            <label class="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border border-line px-3 text-sm transition hover:bg-paper" :class="pollChoice === 'kantin' ? 'border-orange bg-orange/5' : ''"><input type="radio" name="poll" value="kantin" x-model="pollChoice" required class="size-4 accent-orange-dark">Kantin</label>
-                        </div>
-                    </fieldset>
-                    <div x-cloak x-show="voted" class="space-y-3" role="status">
-                        <p class="flex items-center gap-2 text-xs font-medium text-[#567044]"><x-icon name="check" :size="16" />Pilihan demo tercatat di halaman ini.</p>
-                        <template x-for="option in pollResults" :key="option.label"><div><div class="mb-1 flex justify-between text-xs"><span x-text="option.label"></span><span x-text="option.percent + '%'"></span></div><div class="h-2 overflow-hidden rounded-full bg-paper"><div class="h-full rounded-full bg-orange" :style="{ width: option.percent + '%' }"></div></div></div></template>
-                        <p class="text-[10px] leading-4 text-muted">Hasil simulasi · bukan suara anggota sungguhan.</p>
-                    </div>
-                    <div class="mt-4 flex items-center justify-between gap-2"><button x-show="!voted" type="submit" class="primary-button min-h-10 px-4 py-2 text-xs">Kirim pilihan <x-icon name="arrow" :size="14" /></button><span class="text-[10px] text-muted">Berakhir besok</span></div>
-                </form>
-            </section>
+            <livewire:polling.featured />
         </aside>
     </div>
 
@@ -97,6 +80,6 @@ new #[Layout('layouts.dashboard')] class extends Component
 
     <footer class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-[11px] text-muted">
         <span>Digital Class <span class="mx-1 text-orange">✳</span> Dibuat untuk cerita kita.</span>
-        <button @click="openModal('settings')" class="min-h-10 underline decoration-line underline-offset-4">Cerita, profil & agenda aktif · polling masih contoh</button>
+        <button @click="openModal('settings')" class="min-h-10 underline decoration-line underline-offset-4">Cerita, agenda & polling sudah aktif</button>
     </footer>
 </div>

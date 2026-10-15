@@ -27,8 +27,8 @@
         </section>
         <section x-show="modal === 'settings'" class="space-y-4 text-sm leading-7">
             <p>Ini pratinjau dashboard <strong>Digital Class</strong>, dibuat dengan Laravel, Livewire, dan Tailwind CSS.</p>
-            <div class="rounded-2xl bg-[#fff7e9] p-4"><p class="font-semibold">Coba dengan bebas</p><p class="mt-1 text-muted">Ulang tahun, notifikasi, galeri contoh, dan polling masih berupa pratinjau. Pilihan polling kembali ke awal saat halaman dimuat ulang.</p></div>
-            <p class="text-muted">Akun, profil, cerita, komentar, suka, agenda, dan konfirmasi kehadiran sudah tersimpan. Buka Profilku untuk mengubah foto, cerita pribadi, dan privasi. Cerita kelas hanya terlihat oleh anggota kelas yang sama.</p>
+            <div class="rounded-2xl bg-[#fff7e9] p-4"><p class="font-semibold">Coba dengan bebas</p><p class="mt-1 text-muted">Pengumuman, ulang tahun, notifikasi, dan galeri masih berupa pratinjau.</p></div>
+            <p class="text-muted">Akun, profil, cerita, komentar, suka, agenda, konfirmasi kehadiran, dan suara polling sudah tersimpan. Buka Profilku untuk mengubah foto, cerita pribadi, dan privasi. Cerita kelas hanya terlihat oleh anggota kelas yang sama.</p>
         </section>
     </div>
 </dialog>

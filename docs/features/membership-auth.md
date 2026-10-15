@@ -1,6 +1,6 @@
 # Akun, keanggotaan, dan profil
 
-Update lanjutan: [Cerita Kelas](./posts.md) sekarang menyimpan cerita teks, komentar, dan suka. [Agenda Kelas](./events.md) juga sudah menyimpan kegiatan serta konfirmasi kehadiran. Penjelasan batas sosial demo di catatan tahap akun di bawah adalah kondisi sebelum kedua fitur tersebut ditambahkan; polling, galeri, dan notifikasi masih contoh.
+Update lanjutan: [Cerita Kelas](./posts.md) sekarang menyimpan cerita teks, komentar, dan suka. [Agenda Kelas](./events.md) menyimpan kegiatan serta konfirmasi kehadiran, dan [Polling](./polls.md) menyimpan suara anggota. Penjelasan batas sosial demo di catatan tahap akun di bawah adalah kondisi sebelum fitur-fitur tersebut ditambahkan; galeri dan notifikasi masih contoh.
 
 Implementasi 15 Oktober 2026 berada di folder utama `C:/laragon/www/website kelas`, aplikasi Laravel di `src/`. Stack tetap Laravel, Livewire, Tailwind, dan Alpine untuk demo dashboard. Tidak ada paket autentikasi baru; session, password broker, dan email verification memakai Laravel.
 

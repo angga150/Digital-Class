@@ -8,8 +8,6 @@ document.addEventListener('alpine:init', () => {
         search: '',
         searchOpen: false,
         notificationsRead: false,
-        pollChoice: '',
-        voted: false,
         get modalTitle() {
             return { announcement: 'Kabar untuk kelas', birthdays: 'Kalender ulang tahun', event: 'Agenda kelas', memory: 'Selesai tugas, lanjut cerita.', notifications: 'Pemberitahuan', settings: 'Tentang dashboard ini' }[this.modal] || '';
         },
@@ -24,11 +22,6 @@ document.addEventListener('alpine:init', () => {
             ];
             const query = this.search.trim().toLocaleLowerCase('id');
             return query ? entries.filter(entry => entry.label.toLocaleLowerCase('id').includes(query)) : [];
-        },
-        get pollResults() {
-            const gardenVotes = 8 + (this.pollChoice === 'taman' ? 1 : 0);
-            const percent = Math.round(gardenVotes / 13 * 100);
-            return [{ label: 'Taman kampus', percent }, { label: 'Kantin', percent: 100 - percent }];
         },
         openModal(name) {
             if (name === 'event') {
@@ -61,11 +54,6 @@ document.addEventListener('alpine:init', () => {
             clearTimeout(this.toastTimer);
             this.toast = message;
             this.toastTimer = setTimeout(() => this.toast = '', 4500);
-        },
-        vote() {
-            if (this.voted || !['taman', 'kantin'].includes(this.pollChoice)) return;
-            this.voted = true;
-            this.notify('Terima kasih! Ini simulasi polling, bukan voting sungguhan.');
         },
         scrollBehavior() { return matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'; },
         goToResult(result) {

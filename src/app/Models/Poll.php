@@ -2,12 +2,19 @@
 
 namespace App\Models;
 
+use App\Support\CurrentClass;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Poll extends Model
 {
+    protected static function booted(): void
+    {
+        static::addGlobalScope('current_class', fn (Builder $query) => $query->where('polls.class_id', CurrentClass::membership()?->class_id ?? 0));
+    }
+
     protected $fillable = [
         'class_id',
         'created_by',
@@ -18,6 +25,7 @@ class Poll extends Model
         'ends_at',
         'is_active',
         'total_votes',
+        'result_visibility',
     ];
 
     protected $casts = [
@@ -50,15 +58,20 @@ class Poll extends Model
 
     public function hasVoted(?User $user): bool
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
-        
+
         return $this->votes()->where('user_id', $user->id)->exists();
     }
 
     public function isExpired(): bool
     {
-        return $this->ends_at && now()->isAfter($this->ends_at);
+        return $this->ends_at && now()->greaterThanOrEqualTo($this->ends_at);
+    }
+
+    public function isOpen(): bool
+    {
+        return $this->is_active && ! $this->isExpired() && ! $this->allow_multiple;
     }
 }

@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PollOption extends Model
 {
+    protected static function booted(): void
+    {
+        static::addGlobalScope('current_class', fn (Builder $query) => $query->whereHas('poll'));
+    }
+
     protected $fillable = [
         'poll_id',
         'option_text',
@@ -35,6 +41,7 @@ class PollOption extends Model
         if ($this->poll->total_votes === 0) {
             return 0;
         }
+
         return round(($this->votes_count / $this->poll->total_votes) * 100, 1);
     }
 }
