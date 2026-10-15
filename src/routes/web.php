@@ -5,6 +5,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Middleware\EnsureClassMember;
 use App\Livewire\Membership\EditProfile;
 use App\Livewire\Membership\MemberDirectory;
+use App\Livewire\Stories\Feed;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,7 +47,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     Route::middleware(EnsureClassMember::class)->group(function () {
         Route::livewire('/', 'pages::dashboard')->name('dashboard');
-        Route::livewire('/feed', 'pages::feed')->name('feed');
+        Route::get('/feed', Feed::class)->name('feed');
         Route::livewire('/events', 'pages::events')->name('events');
         Route::livewire('/gallery', 'pages::gallery')->name('gallery');
         Route::get('/profile', EditProfile::class)->name('profile');

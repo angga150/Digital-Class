@@ -2,12 +2,24 @@
 
 namespace App\Models;
 
+use App\Support\CurrentClass;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
+    use SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('current_class', function (Builder $query) {
+            $query->where('posts.class_id', CurrentClass::membership()?->class_id ?? 0);
+        });
+    }
+
     protected $fillable = [
         'class_id',
         'user_id',
@@ -47,10 +59,10 @@ class Post extends Model
 
     public function isLikedBy(?User $user): bool
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
-        
+
         return $this->likes()->where('user_id', $user->id)->exists();
     }
 }

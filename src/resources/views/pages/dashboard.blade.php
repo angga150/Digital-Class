@@ -5,7 +5,7 @@ use Livewire\Attributes\Layout;
 
 new #[Layout('layouts.dashboard')] class extends Component
 {
-    // Authentication and membership are live. Social content remains a labelled demo.
+    // Accounts and stories are persisted. Other dashboard widgets remain labelled examples.
 };
 ?>
 
@@ -50,42 +50,7 @@ new #[Layout('layouts.dashboard')] class extends Component
     </section>
 
     <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(290px,1fr)]">
-        <section id="cerita" class="min-w-0 scroll-mt-24" aria-labelledby="feed-heading">
-            <div class="mb-4 flex items-center justify-between">
-                <h2 id="feed-heading" class="text-lg font-bold tracking-tight">Cerita terbaru <span class="ml-1 text-orange">✳</span></h2>
-                <span class="text-xs text-muted">Dari teman, untuk teman</span>
-            </div>
-            <div class="card mb-4 flex items-center gap-3 p-4">
-                <x-avatar :initials="auth()->user()->initials" />
-                <button @click="openModal('compose')" class="flex min-h-11 flex-1 items-center justify-between gap-2 rounded-xl bg-paper px-4 text-left text-xs text-muted transition hover:bg-[#f0eee8] sm:text-sm"><span>Mau berbagi apa hari ini?</span><x-icon name="pen" :size="18" /></button>
-            </div>
-
-            <div class="space-y-4">
-                <template x-for="post in posts" :key="post.id">
-                    <article class="card overflow-hidden">
-                        <div class="flex items-center gap-3 px-5 pt-5">
-                            <span class="inline-flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-bold" :class="post.tone" x-text="post.initials" aria-hidden="true"></span>
-                            <div class="flex-1"><h3 class="text-sm font-semibold" x-text="post.author"></h3><p class="mt-0.5 text-[11px] text-muted"><span x-text="post.time"></span><span aria-hidden="true"> · </span>Contoh cerita</p></div>
-                            <button @click="post.saved = !post.saved; notify(post.saved ? 'Cerita ditandai di demo ini.' : 'Tanda cerita dihapus.')" class="icon-button" :aria-label="post.saved ? 'Hapus tanda cerita' : 'Tandai cerita'" :aria-pressed="post.saved"><x-icon name="bookmark" :size="18" x-bind:class="post.saved ? 'fill-orange/20 text-orange-dark' : ''" /></button>
-                        </div>
-                        <p class="whitespace-pre-wrap break-words px-5 pb-4 pt-3 text-sm leading-6" x-text="post.body"></p>
-                        <template x-if="post.photo">
-                            <button @click="openModal('memory')" class="mx-4 block w-[calc(100%-2rem)] overflow-hidden rounded-xl" aria-label="Perbesar foto teman-teman di kampus">
-                                <img src="{{ asset('img/dashboard/campus-friends.png') }}" width="1774" height="887" alt="Ilustrasi AI: lima teman mahasiswa berbincang di taman kampus" class="aspect-[16/9] w-full object-cover transition duration-300 hover:scale-[1.025]">
-                            </button>
-                        </template>
-                        <div class="flex items-center justify-between px-4 py-2.5">
-                            <div class="flex gap-1">
-                                <button @click="post.liked = !post.liked" class="icon-button w-auto gap-2 px-2 text-xs" :aria-pressed="post.liked" :aria-label="post.liked ? 'Batal suka cerita' : 'Suka cerita'"><x-icon name="heart" :size="20" x-bind:class="post.liked ? 'fill-orange text-orange-dark' : ''" /><span x-text="post.likes + (post.liked ? 1 : 0)"></span></button>
-                                <button @click="selectedPost = post.id; openModal('comments')" class="icon-button w-auto gap-2 px-2 text-xs" aria-label="Buka komentar"><x-icon name="comment" :size="19" /><span x-text="post.comments.length"></span></button>
-                            </div>
-                            <span class="text-[10px] text-muted">Ruang cerita kelas</span>
-                        </div>
-                    </article>
-                </template>
-            </div>
-            <p class="py-5 text-center text-xs text-muted">Sudah sampai di cerita terbaru. Giliran kamu? <span class="text-orange">☺</span></p>
-        </section>
+        <livewire:stories.feed />
 
         <aside class="order-first space-y-5 xl:order-none" aria-label="Kabar dan kegiatan kelas">
             <section class="relative overflow-hidden rounded-3xl border border-[#f4e6aa] bg-[#fff3c8] p-5" aria-labelledby="birthday-heading">
@@ -140,6 +105,6 @@ new #[Layout('layouts.dashboard')] class extends Component
 
     <footer class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-[11px] text-muted">
         <span>Digital Class <span class="mx-1 text-orange">✳</span> Dibuat untuk cerita kita.</span>
-        <button @click="openModal('settings')" class="min-h-10 underline decoration-line underline-offset-4">Konten sosial masih demo · akun & profil tersimpan</button>
+        <button @click="openModal('settings')" class="min-h-10 underline decoration-line underline-offset-4">Cerita & profil tersimpan · agenda dan polling masih contoh</button>
     </footer>
 </div>

@@ -1,5 +1,7 @@
 # Akun, keanggotaan, dan profil
 
+Update lanjutan: [Cerita Kelas](./posts.md) sekarang menyimpan cerita teks, komentar, dan suka. Penjelasan batas sosial demo di catatan tahap akun di bawah adalah kondisi sebelum fitur cerita ditambahkan; agenda, polling, galeri, dan notifikasi masih contoh.
+
 Implementasi 15 Oktober 2026 berada di folder utama `C:/laragon/www/website kelas`, aplikasi Laravel di `src/`. Stack tetap Laravel, Livewire, Tailwind, dan Alpine untuk demo dashboard. Tidak ada paket autentikasi baru; session, password broker, dan email verification memakai Laravel.
 
 ## Yang sudah bekerja

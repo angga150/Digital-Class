@@ -1,5 +1,4 @@
-// Deliberately transient demo state. Production mutations must use Livewire
-// validation, authentication, class scopes, and Policies before persistence.
+// Navigation and remaining example widgets. Persistent stories use Livewire.
 document.addEventListener('alpine:init', () => {
     Alpine.data('classDashboard', () => ({
         active: 'beranda',
@@ -9,26 +8,14 @@ document.addEventListener('alpine:init', () => {
         search: '',
         searchOpen: false,
         notificationsRead: false,
-        draft: '',
-        draftError: '',
-        commentDraft: '',
-        commentError: '',
-        selectedPost: 1,
         pollChoice: '',
         voted: false,
-        posts: [
-            { id: 1, author: 'Nadia', initials: 'N', tone: 'bg-[#ede4f3] text-[#76518d]', time: '20 menit lalu', body: 'Satu tugas selesai, satu kenangan baru! 🌿\nTim paling susah diajak serius, tapi selalu bisa diandalkan.', photo: true, likes: 12, liked: false, saved: false,
-                comments: [{ id: 1, author: 'Rani', text: 'Habis ini kita rayakan di kantin ya!' }, { id: 2, author: 'Bima', text: 'Presentasi aman, perut harus aman juga 😄' }] },
-            { id: 2, author: 'Bima', initials: 'B', tone: 'bg-[#e6ead9] text-[#526443]', time: '1 jam lalu', body: 'Ada yang mau latihan presentasi bareng besok? Ketemu di perpustakaan setelah kelas, yuk. ☕', photo: false, likes: 5, liked: false, saved: false, comments: [] },
-        ],
         get modalTitle() {
-            return { compose: 'Tulis cerita', comments: 'Obrolan kecil', announcement: 'Kabar untuk kelas', birthdays: 'Kalender ulang tahun', event: 'Agenda kelas', memory: 'Selesai tugas, lanjut cerita.', members: 'Teman kelas kita', profile: 'Hai, ini Angga!', notifications: 'Pemberitahuan', settings: 'Tentang dashboard ini' }[this.modal] || '';
+            return { announcement: 'Kabar untuk kelas', birthdays: 'Kalender ulang tahun', event: 'Agenda kelas', memory: 'Selesai tugas, lanjut cerita.', notifications: 'Pemberitahuan', settings: 'Tentang dashboard ini' }[this.modal] || '';
         },
-        get currentPost() { return this.posts.find(post => post.id === this.selectedPost); },
         get searchResults() {
             const entries = [
-                { label: 'Cerita Nadia · satu tugas selesai', target: 'cerita' },
-                { label: 'Cerita Bima · latihan presentasi', target: 'cerita' },
+                { label: 'Cerita kelas · kabar terbaru dari teman', target: 'cerita' },
                 { label: 'Agenda · presentasi kelompok', modal: 'event' },
                 { label: 'Rani · ulang tahun', modal: 'birthdays' },
                 { label: 'Teman kelas · cari anggota kelasmu', modal: 'members' },
@@ -44,20 +31,22 @@ document.addEventListener('alpine:init', () => {
             return [{ label: 'Taman kampus', percent }, { label: 'Kantin', percent: 100 - percent }];
         },
         openModal(name) {
+            if (name === 'compose') {
+                document.getElementById('story-compose')?.scrollIntoView({ behavior: this.scrollBehavior() });
+                document.getElementById('story-body')?.focus({ preventScroll: true });
+                return;
+            }
             if (name === 'members' || name === 'profile') {
                 window.location.href = document.body.dataset[name + 'Url'];
                 return;
             }
             this.modal = name;
-            this.draftError = '';
-            this.commentError = '';
             if (name === 'notifications') this.notificationsRead = true;
-            if (name === 'comments') this.commentDraft = '';
             this.searchOpen = false;
             // Search results disappear before nextTick; resolve stable DOM targets
             // here instead of relying on the removed result's Alpine $refs scope.
             const dialog = document.getElementById('dashboard-dialog');
-            const focusId = name === 'compose' ? 'story-draft' : name === 'comments' ? 'comment-draft' : 'dialog-title';
+            const focusId = 'dialog-title';
             this.$nextTick(() => {
                 if (!dialog.open) dialog.showModal();
                 document.getElementById(focusId).focus();
@@ -68,31 +57,6 @@ document.addEventListener('alpine:init', () => {
             clearTimeout(this.toastTimer);
             this.toast = message;
             this.toastTimer = setTimeout(() => this.toast = '', 4500);
-        },
-        publish() {
-            const body = this.draft.trim();
-            if (!body || body.length > 500) {
-                this.draftError = 'Tulis cerita antara 1–500 karakter dulu, ya.';
-                return;
-            }
-            this.posts.unshift({ id: Date.now(), author: document.body.dataset.userName, initials: document.body.dataset.userInitials, tone: 'bg-[#f4dcc8] text-[#834d2a]', time: 'Baru saja', body, photo: false, likes: 0, liked: false, saved: false, comments: [] });
-            this.draft = '';
-            this.closeModal();
-            this.active = 'cerita';
-            document.getElementById('cerita').scrollIntoView({ behavior: this.scrollBehavior() });
-            this.notify('Cerita ditambahkan ke demo. Hilang saat halaman dimuat ulang.');
-        },
-        addComment() {
-            const text = this.commentDraft.trim();
-            if (!text || text.length > 300) {
-                this.commentError = 'Isi komentar antara 1–300 karakter.';
-                return;
-            }
-            if (!this.currentPost) return;
-            this.currentPost.comments.push({ id: Date.now(), author: document.body.dataset.userName, text });
-            this.commentDraft = '';
-            this.commentError = '';
-            this.notify('Komentar ditambahkan ke demo.');
         },
         vote() {
             if (this.voted || !['taman', 'kantin'].includes(this.pollChoice)) return;
