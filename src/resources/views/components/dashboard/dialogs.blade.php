@@ -10,11 +10,6 @@
             <p class="text-sm leading-7 text-muted">Untuk pertemuan besok, kelas kita pindah ke gedung B, lantai 2, ruang 204. Jam masuk tetap sesuai jadwal. Sampai ketemu di kelas!</p>
             <p class="border-t border-line pt-4 text-xs text-muted">Pengurus kelas · data contoh, bukan pengumuman resmi</p>
         </section>
-        <section x-show="modal === 'birthdays'">
-            <p class="mb-5 text-sm leading-6 text-muted">Sedikit perhatian, banyak senyuman. Ini kalender ulang tahun dengan data contoh.</p>
-            <div class="flex items-center gap-4 rounded-2xl bg-[#fff3c8] p-4"><x-avatar initials="R" tone="sage" /><div class="flex-1"><p class="font-semibold">Rani</p><p class="mt-1 text-sm text-muted">{{ now('Asia/Jakarta')->addDays(2)->locale('id')->translatedFormat('j F') }}</p></div><span class="text-xs font-semibold text-orange-dark">2 hari lagi</span><x-icon name="cake" class="text-orange" :size="28" /></div>
-            <p class="mt-5 text-xs leading-6 text-muted">Pada versi lengkap, hanya ulang tahun yang diizinkan pemiliknya yang ditampilkan. Tahun lahir tidak ditampilkan.</p>
-        </section>
         <section x-show="modal === 'memory'">
             <img src="{{ asset('img/dashboard/campus-friends.png') }}" width="1774" height="887" alt="Foto ilustrasi AI, lima mahasiswa berbincang bersama di taman kampus" class="w-full rounded-2xl">
             <p class="mt-4 text-sm leading-6">Obrolan setelah kelas yang selalu kepanjangan. Hal kecil begini yang nanti paling kita kangenin.</p>
@@ -23,12 +18,12 @@
         <section x-show="modal === 'notifications'">
             <p class="mb-4 text-xs text-muted">Pemberitahuan contoh untuk pratinjau tampilan.</p>
             <button @click="openModal('announcement')" class="flex w-full items-start gap-3 rounded-2xl bg-sage p-4 text-left"><x-icon name="megaphone" class="mt-1 text-[#526443]" /><span><span class="block text-sm font-semibold">Ada perubahan ruang kelas</span><span class="mt-1 block text-xs text-muted">Baca info ruang B.204</span></span></button>
-            <button @click="openModal('birthdays')" class="mt-3 flex w-full items-start gap-3 rounded-2xl bg-[#fff3c8] p-4 text-left"><x-icon name="cake" class="mt-1 text-orange-dark" /><span><span class="block text-sm font-semibold">Rani ulang tahun 2 hari lagi</span><span class="mt-1 block text-xs text-muted">Jangan lupa kasih ucapan, ya!</span></span></button>
+            <button @click="openModal('birthdays')" class="mt-3 flex w-full items-start gap-3 rounded-2xl bg-[#fff3c8] p-4 text-left"><x-icon name="cake" class="mt-1 text-orange-dark" /><span><span class="block text-sm font-semibold">Kalender ulang tahun kelas</span><span class="mt-1 block text-xs text-muted">Lihat hari spesial yang dibagikan teman sekelas.</span></span></button>
         </section>
         <section x-show="modal === 'settings'" class="space-y-4 text-sm leading-7">
             <p>Ini pratinjau dashboard <strong>Digital Class</strong>, dibuat dengan Laravel, Livewire, dan Tailwind CSS.</p>
-            <div class="rounded-2xl bg-[#fff7e9] p-4"><p class="font-semibold">Coba dengan bebas</p><p class="mt-1 text-muted">Pengumuman, ulang tahun, notifikasi, dan galeri masih berupa pratinjau.</p></div>
-            <p class="text-muted">Akun, profil, cerita, komentar, suka, agenda, konfirmasi kehadiran, dan suara polling sudah tersimpan. Buka Profilku untuk mengubah foto, cerita pribadi, dan privasi. Cerita kelas hanya terlihat oleh anggota kelas yang sama.</p>
+            <div class="rounded-2xl bg-[#fff7e9] p-4"><p class="font-semibold">Coba dengan bebas</p><p class="mt-1 text-muted">Pengumuman, notifikasi, dan galeri masih berupa pratinjau.</p></div>
+            <p class="text-muted">Akun, profil, cerita, komentar, suka, agenda, konfirmasi kehadiran, dan suara polling sudah tersimpan. Kalender ulang tahun mengikuti data serta privasi profil. Buka Profilku untuk mengubah foto, cerita pribadi, dan privasi. Cerita kelas hanya terlihat oleh anggota kelas yang sama.</p>
         </section>
     </div>
 </dialog>

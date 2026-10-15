@@ -7,7 +7,7 @@
             <input id="dashboard-search" type="search" x-model="search" @input="searchOpen = true" @focus="searchOpen = true" :aria-expanded="searchOpen && search.trim().length > 0" aria-controls="search-results" autocomplete="off" placeholder="Cari cerita, agenda, atau teman..." class="field border-transparent bg-[#f0eee8] pl-11">
             <div id="search-results" x-cloak x-show="searchOpen && search.trim()" class="absolute inset-x-0 top-14 rounded-2xl border border-line bg-white p-2 shadow-lg">
                 <template x-for="result in searchResults" :key="result.label"><button @click="goToResult(result)" class="block min-h-11 w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-paper" x-text="result.label"></button></template>
-                <p x-show="!searchResults.length" class="p-3 text-sm text-muted">Belum ketemu. Coba “agenda” atau “Rani”.</p>
+                <p x-show="!searchResults.length" class="p-3 text-sm text-muted">Belum ketemu. Coba “agenda” atau “ulang tahun”.</p>
             </div>
         </div>
         <div class="ml-auto flex items-center gap-2 sm:gap-4">

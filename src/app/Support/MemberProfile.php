@@ -34,6 +34,8 @@ class MemberProfile
             'favorite' => $visible ? ($profile?->favorite ?? []) : [],
             'fun_fact' => $visible ? $profile?->fun_fact : null,
             'birthday' => $birthdayVisible && $birthday ? $birthday->locale('id')->translatedFormat($profile->birth_year_visible ? 'j F Y' : 'j F') : null,
+            'birthday_month' => $birthdayVisible && $birthday ? $birthday->month : null,
+            'birthday_day' => $birthdayVisible && $birthday ? $birthday->day : null,
         ];
     }
 }

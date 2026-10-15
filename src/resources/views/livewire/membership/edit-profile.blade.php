@@ -63,7 +63,7 @@
                     @foreach(['profile_visibility' => 'Siapa yang bisa melihat foto, bio, dan cerita profil?', 'birthday_visibility' => 'Siapa yang bisa melihat ulang tahun?'] as $field => $label)
                     <div><label for="{{ $field }}" class="mb-2 block text-sm font-semibold">{{ $label }}</label><select id="{{ $field }}" wire:model="{{ $field }}" class="field"><option value="class_only">Teman satu kelas</option><option value="admin_only">Pengurus kelas saja</option><option value="private">Hanya aku</option></select>@error($field)<p class="text-xs text-red-700">{{ $message }}</p>@enderror</div>
                     @endforeach
-                    <p class="rounded-xl bg-sage p-3 text-xs leading-6 text-[#526443]">Jika profil dipilih “Hanya aku”, seluruh detail termasuk ulang tahun ikut disembunyikan dari anggota lain.</p>
+                    <p class="rounded-xl bg-sage p-3 text-xs leading-6 text-[#526443]">Jika profil dipilih “Hanya aku”, seluruh detail termasuk ulang tahun ikut disembunyikan dari anggota lain. Kalender dan widget juga mengikuti pilihan privasi ini; tanggal privat tidak memunculkan pengingat untuk teman sekelas.</p>
                 </div>
             </section>
             <div class="flex flex-wrap items-center justify-between gap-3">

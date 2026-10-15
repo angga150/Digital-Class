@@ -15,6 +15,7 @@
                 <a href="{{ route('feed') }}" class="quiet-button {{ request()->routeIs('feed') ? 'bg-orange/10' : 'text-muted' }}">Cerita</a>
                 <a href="{{ route('events') }}" class="quiet-button {{ request()->routeIs('events*') ? 'bg-orange/10' : 'text-muted' }}">Agenda</a>
                 <a href="{{ route('polls') }}" class="quiet-button {{ request()->routeIs('polls') ? 'bg-orange/10' : 'text-muted' }}">Polling</a>
+                <a href="{{ route('birthdays') }}" class="quiet-button {{ request()->routeIs('birthdays') ? 'bg-orange/10' : 'text-muted' }}">Ulang tahun</a>
                 <a href="{{ route('members') }}" class="quiet-button {{ request()->routeIs('members*') ? 'bg-orange/10' : 'text-muted' }}">Teman</a>
                 <a href="{{ route('profile') }}" class="quiet-button {{ request()->routeIs('profile') ? 'bg-orange/10' : 'text-muted' }}">Profilku</a>
                 <form action="{{ route('logout') }}" method="POST">@csrf<button class="quiet-button text-muted" type="submit">Keluar</button></form>

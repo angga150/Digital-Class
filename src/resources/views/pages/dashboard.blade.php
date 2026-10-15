@@ -13,7 +13,6 @@ new #[Layout('layouts.dashboard')] class extends Component
     @php
         $today = now('Asia/Jakarta')->locale('id');
 
-        $birthdayDate = $today->copy()->addDays(2);
     @endphp
     <section class="mb-6 flex flex-wrap items-center justify-between gap-4 sm:mb-7" aria-labelledby="greeting">
         <div>
@@ -53,16 +52,7 @@ new #[Layout('layouts.dashboard')] class extends Component
         <livewire:stories.feed />
 
         <aside class="order-first space-y-5 xl:order-none" aria-label="Kabar dan kegiatan kelas">
-            <section class="relative overflow-hidden rounded-3xl border border-[#f4e6aa] bg-[#fff3c8] p-5" aria-labelledby="birthday-heading">
-                <h2 id="birthday-heading" class="flex items-center gap-2 text-sm font-semibold"><x-icon name="sparkle" :size="16" class="text-[#b77d20]" />Sebentar lagi tiup lilin!</h2>
-                <div class="mt-5 flex items-center gap-3">
-                    <x-avatar initials="R" tone="sage" class="size-12" />
-                    <div><p class="font-bold">Rani</p><p class="mt-1 inline-flex items-center gap-1.5 rounded-full bg-[#ffe9a2] px-2 py-1 text-[10px] font-semibold text-[#885c19]"><x-icon name="cake" :size="12" />2 hari lagi</p></div>
-                    <x-icon name="cake" :size="49" class="ml-auto mr-1 rotate-6 text-orange" />
-                </div>
-                <button @click="openModal('birthdays')" class="mt-4 inline-flex min-h-10 items-center gap-3 rounded-full bg-white/85 px-4 py-2 text-xs font-semibold text-orange-dark transition hover:bg-white">Lihat kalender <x-icon name="arrow" :size="15" /></button>
-                <x-icon name="star" :size="13" class="absolute right-8 top-12 -rotate-12 text-orange" />
-            </section>
+            <livewire:birthdays.upcoming />
 
             <livewire:agenda.next-event />
 
