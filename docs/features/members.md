@@ -2,7 +2,9 @@
 
 ## Status
 
-Planned (belum diimplementasi)
+Fondasi diimplementasikan (15 Oktober 2026): login, registrasi lewat kode undangan, direktori anggota per kelas, detail profil, edit profil, foto privat, dan visibility. Lihat [panduan akun & profil](./membership-auth.md).
+
+Achievement otomatis dan integrasi profil ke konten sosial belum diimplementasikan. Dashboard masih menandai cerita, agenda, polling, dan notifikasinya sebagai data contoh.
 
 ## Tujuan
 

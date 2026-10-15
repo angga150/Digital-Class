@@ -11,10 +11,11 @@
             </div>
         </div>
         <div class="ml-auto flex items-center gap-2 sm:gap-4">
-            <button @click="openModal('settings')" class="hidden rounded-full border border-[#eadbc7] bg-[#fff7e9] px-3 py-1 text-[11px] font-semibold text-[#83613a] sm:block">Mode demo</button>
+            <button @click="openModal('settings')" class="hidden rounded-full border border-[#eadbc7] bg-[#fff7e9] px-3 py-1 text-[11px] font-semibold text-[#83613a] sm:block">Konten contoh</button>
             <button @click="openModal('notifications')" class="icon-button relative" aria-label="Lihat pemberitahuan"><x-icon name="bell" :size="22" /><span x-show="!notificationsRead" class="absolute right-3 top-2.5 size-2 rounded-full bg-orange ring-2 ring-paper"></span></button>
             <span class="hidden h-7 w-px bg-line sm:block"></span>
-            <button @click="openModal('profile')" class="rounded-full" aria-label="Lihat profil Angga"><x-avatar initials="A" /></button>
+            <a href="{{ route('members') }}" class="icon-button lg:hidden" aria-label="Teman kelas"><x-icon name="users" :size="21" /></a>
+            <a href="{{ route('profile') }}" class="rounded-full" aria-label="Buka profilku"><x-avatar :initials="auth()->user()->initials" /></a>
         </div>
     </div>
 </header>

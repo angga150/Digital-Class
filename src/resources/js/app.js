@@ -31,7 +31,7 @@ document.addEventListener('alpine:init', () => {
                 { label: 'Cerita Bima · latihan presentasi', target: 'cerita' },
                 { label: 'Agenda · presentasi kelompok', modal: 'event' },
                 { label: 'Rani · ulang tahun', modal: 'birthdays' },
-                { label: 'Teman kelas · Angga, Nadia, Rani, Bima', modal: 'members' },
+                { label: 'Teman kelas · cari anggota kelasmu', modal: 'members' },
                 { label: 'Kenangan · album kehidupan kampus', target: 'kenangan' },
                 { label: 'Info kelas · ruang B.204', modal: 'announcement' },
             ];
@@ -44,6 +44,10 @@ document.addEventListener('alpine:init', () => {
             return [{ label: 'Taman kampus', percent }, { label: 'Kantin', percent: 100 - percent }];
         },
         openModal(name) {
+            if (name === 'members' || name === 'profile') {
+                window.location.href = document.body.dataset[name + 'Url'];
+                return;
+            }
             this.modal = name;
             this.draftError = '';
             this.commentError = '';
@@ -71,7 +75,7 @@ document.addEventListener('alpine:init', () => {
                 this.draftError = 'Tulis cerita antara 1–500 karakter dulu, ya.';
                 return;
             }
-            this.posts.unshift({ id: Date.now(), author: 'Angga', initials: 'A', tone: 'bg-[#f4dcc8] text-[#834d2a]', time: 'Baru saja', body, photo: false, likes: 0, liked: false, saved: false, comments: [] });
+            this.posts.unshift({ id: Date.now(), author: document.body.dataset.userName, initials: document.body.dataset.userInitials, tone: 'bg-[#f4dcc8] text-[#834d2a]', time: 'Baru saja', body, photo: false, likes: 0, liked: false, saved: false, comments: [] });
             this.draft = '';
             this.closeModal();
             this.active = 'cerita';
@@ -85,7 +89,7 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
             if (!this.currentPost) return;
-            this.currentPost.comments.push({ id: Date.now(), author: 'Angga', text });
+            this.currentPost.comments.push({ id: Date.now(), author: document.body.dataset.userName, text });
             this.commentDraft = '';
             this.commentError = '';
             this.notify('Komentar ditambahkan ke demo.');

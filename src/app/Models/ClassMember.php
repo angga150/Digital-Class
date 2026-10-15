@@ -2,11 +2,21 @@
 
 namespace App\Models;
 
+use App\Support\CurrentClass;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ClassMember extends Model
 {
+    protected static function booted(): void
+    {
+        static::addGlobalScope('current_class', function (Builder $query) {
+            $membership = CurrentClass::membership();
+            $query->where('class_members.class_id', $membership?->class_id ?? 0);
+        });
+    }
+
     protected $fillable = [
         'class_id',
         'user_id',
@@ -41,15 +51,16 @@ class ClassMember extends Model
         if ($this->total_sessions === 0) {
             return 0;
         }
+
         return round(($this->attendance_count / $this->total_sessions) * 100, 1);
     }
 
     public function isBirthdayToday(): bool
     {
-        if (!$this->birthday) {
+        if (! $this->birthday) {
             return false;
         }
-        
+
         return $this->birthday->format('m-d') === now()->format('m-d');
     }
 }

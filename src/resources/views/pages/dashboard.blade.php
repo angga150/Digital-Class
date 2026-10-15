@@ -5,7 +5,7 @@ use Livewire\Attributes\Layout;
 
 new #[Layout('layouts.dashboard')] class extends Component
 {
-    // This page is a UI demo. Membership, posts, and polls are not persisted yet.
+    // Authentication and membership are live. Social content remains a labelled demo.
 };
 ?>
 
@@ -18,7 +18,7 @@ new #[Layout('layouts.dashboard')] class extends Component
     <section class="mb-6 flex flex-wrap items-center justify-between gap-4 sm:mb-7" aria-labelledby="greeting">
         <div>
             <p class="mb-2 text-xs font-medium text-muted">{{ $today->translatedFormat('l, j F Y') }}</p>
-            <h1 id="greeting" class="flex items-center gap-3 text-[30px] font-bold tracking-[-.04em] sm:text-[38px]">Hai, Angga! <span class="inline-block -rotate-12 text-orange"><x-icon name="sparkle" :size="27" /></span></h1>
+            <h1 id="greeting" class="flex items-center gap-3 text-[30px] font-bold tracking-[-.04em] sm:text-[38px]"><span class="min-w-0 break-words">Hai, {{ auth()->user()->display_name }}!</span> <span class="inline-block shrink-0 -rotate-12 text-orange"><x-icon name="sparkle" :size="27" /></span></h1>
             <p class="mt-1 text-sm text-muted sm:text-base">Ada cerita apa di kelas hari ini?</p>
         </div>
         <button @click="openModal('compose')" class="primary-button"><x-icon name="pen" :size="17" />Tulis cerita</button>
@@ -56,7 +56,7 @@ new #[Layout('layouts.dashboard')] class extends Component
                 <span class="text-xs text-muted">Dari teman, untuk teman</span>
             </div>
             <div class="card mb-4 flex items-center gap-3 p-4">
-                <x-avatar initials="A" />
+                <x-avatar :initials="auth()->user()->initials" />
                 <button @click="openModal('compose')" class="flex min-h-11 flex-1 items-center justify-between gap-2 rounded-xl bg-paper px-4 text-left text-xs text-muted transition hover:bg-[#f0eee8] sm:text-sm"><span>Mau berbagi apa hari ini?</span><x-icon name="pen" :size="18" /></button>
             </div>
 
@@ -140,6 +140,6 @@ new #[Layout('layouts.dashboard')] class extends Component
 
     <footer class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-[11px] text-muted">
         <span>Digital Class <span class="mx-1 text-orange">✳</span> Dibuat untuk cerita kita.</span>
-        <button @click="openModal('settings')" class="min-h-10 underline decoration-line underline-offset-4">Mode demo · data contoh, tidak disimpan</button>
+        <button @click="openModal('settings')" class="min-h-10 underline decoration-line underline-offset-4">Konten sosial masih demo · akun & profil tersimpan</button>
     </footer>
 </div>

@@ -66,7 +66,7 @@
         <section x-show="modal === 'settings'" class="space-y-4 text-sm leading-7">
             <p>Ini pratinjau dashboard <strong>Digital Class</strong>, dibuat dengan Laravel, Livewire, dan Tailwind CSS.</p>
             <div class="rounded-2xl bg-[#fff7e9] p-4"><p class="font-semibold">Coba dengan bebas</p><p class="mt-1 text-muted">Cerita, komentar, tanda suka, dan polling hanya berubah di halaman ini. Semua kembali ke data contoh saat halaman dimuat ulang.</p></div>
-            <p class="text-muted">Data anggota dan foto bersifat ilustratif. Login, penyimpanan database, unggah foto, serta pengaturan privasi akan dihubungkan pada tahap fitur berikutnya.</p>
+            <p class="text-muted">Akun, keanggotaan, dan profil sudah tersimpan. Buka Profilku untuk mengubah foto, cerita pribadi, dan privasi. Cerita kelas, agenda, polling, dan notifikasi di dashboard masih memakai data contoh.</p>
         </section>
     </div>
 </dialog>
