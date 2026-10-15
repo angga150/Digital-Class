@@ -18,7 +18,7 @@ Gambar, pilihan visibility per cerita, report/moderasi dengan audit log, dan inf
 - Data penulis melalui presenter profil: nickname privat tidak bocor di feed. Email tidak dikirim ke tampilan. Avatar feed saat ini berupa inisial.
 - Soft-delete mempertahankan data untuk pemulihan administratif; belum ada tombol restore di UI. Jangan menganggapnya recycle bin pengguna.
 - Halaman lama `resources/views/pages/feed.blade.php` tetap disimpan untuk konteks, tetapi route aktif memakai `App/Livewire/Stories/Feed.php` dan `resources/views/livewire/stories/feed.blade.php`.
-- Modal dan state contoh cerita/komentar di dashboard diganti oleh komponen persisten. Agenda, ulang tahun, galeri, notifikasi, dan polling masih contoh yang diberi penjelasan.
+- Modal dan state contoh cerita/komentar di dashboard diganti oleh komponen persisten. [Agenda](./events.md) juga sudah terhubung ke database. Ulang tahun, galeri, notifikasi, dan polling masih contoh yang diberi penjelasan.
 
 Jalankan `php artisan migrate`, `npm run build`, dan `php artisan test` dari `src/`. Test memakai SQLite in-memory. Database lokal dicadangkan sebelum migration ke `C:/Users/USER/.codex/backups/website-kelas/auth-20261015/database-before-stories.sqlite`.
 

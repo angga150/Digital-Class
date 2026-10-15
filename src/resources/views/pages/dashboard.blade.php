@@ -12,7 +12,7 @@ new #[Layout('layouts.dashboard')] class extends Component
 <div id="beranda">
     @php
         $today = now('Asia/Jakarta')->locale('id');
-        $eventDate = $today->copy()->addDays(3);
+
         $birthdayDate = $today->copy()->addDays(2);
     @endphp
     <section class="mb-6 flex flex-wrap items-center justify-between gap-4 sm:mb-7" aria-labelledby="greeting">
@@ -64,15 +64,7 @@ new #[Layout('layouts.dashboard')] class extends Component
                 <x-icon name="star" :size="13" class="absolute right-8 top-12 -rotate-12 text-orange" />
             </section>
 
-            <section id="agenda" class="card scroll-mt-24 p-5" aria-labelledby="agenda-heading">
-                <div class="mb-4 flex items-center justify-between"><h2 id="agenda-heading" class="flex items-center gap-2 text-sm font-semibold"><x-icon name="calendar" :size="17" />Agenda terdekat</h2><span class="size-1.5 rounded-full bg-[#93a87a]"></span></div>
-                <button @click="openModal('event')" class="flex w-full items-center gap-3 rounded-xl text-left">
-                    <span class="flex size-14 shrink-0 flex-col items-center justify-center rounded-xl bg-[#fcf4ec] text-orange-dark"><span class="text-xl font-semibold">{{ $eventDate->format('d') }}</span><span class="text-[10px] font-semibold uppercase">{{ $eventDate->translatedFormat('M') }}</span></span>
-                    <span class="min-w-0 flex-1"><span class="block text-sm font-semibold">Presentasi kelompok</span><span class="mt-1 block text-xs text-muted">{{ $eventDate->translatedFormat('l') }} · 09.00 WIB</span></span>
-                    <x-icon name="chevron" :size="15" class="text-muted" />
-                </button>
-                <div class="mt-4 flex items-center justify-between border-t border-line pt-3"><span class="flex items-center gap-1.5 text-[11px] text-muted"><x-icon name="pin" :size="13" />Ruang B.204</span><span class="rounded-md bg-sage px-2 py-1 text-[10px] font-semibold text-[#50683e]">3 hari lagi</span></div>
-            </section>
+            <livewire:agenda.next-event />
 
             <section class="card p-5" aria-labelledby="poll-heading">
                 <h2 id="poll-heading" class="mb-4 flex items-center gap-2 text-sm font-semibold"><x-icon name="chart" :size="17" />Suara kelas</h2>
@@ -105,6 +97,6 @@ new #[Layout('layouts.dashboard')] class extends Component
 
     <footer class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-[11px] text-muted">
         <span>Digital Class <span class="mx-1 text-orange">✳</span> Dibuat untuk cerita kita.</span>
-        <button @click="openModal('settings')" class="min-h-10 underline decoration-line underline-offset-4">Cerita & profil tersimpan · agenda dan polling masih contoh</button>
+        <button @click="openModal('settings')" class="min-h-10 underline decoration-line underline-offset-4">Cerita, profil & agenda aktif · polling masih contoh</button>
     </footer>
 </div>

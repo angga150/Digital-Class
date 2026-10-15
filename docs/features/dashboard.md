@@ -2,17 +2,19 @@
 
 ## Status
 
-UI demo diimplementasikan (6 Oktober 2026); integrasi data dan autentikasi masih planned.
+Tampilan scrapbook diimplementasikan pada 6 Oktober 2026. Per 15 Oktober 2026, autentikasi, profil, Cerita Kelas, dan Agenda sudah terhubung ke database; sebagian widget lainnya masih demo.
 
 Dashboard memakai halaman Livewire, komponen Blade di `src/resources/views/components/dashboard/`, Tailwind CSS, dan Alpine bawaan Livewire untuk interaksi demo. Desain mengacu pada `docs/design/dashboard-concept-v1.png`.
 
 - Layout desktop dengan sidebar; HP dengan navigasi bawah dan kartu kabar sebelum feed.
-- Pengumuman, agenda, ulang tahun, cerita, polling, dan album memakai data contoh. Tanggal contoh mengikuti waktu Asia/Jakarta.
-- Tulis cerita, komentar, suka, penanda, pencarian data contoh, dan voting berjalan sebagai simulasi sementara di browser. Tidak ada penyimpanan database/local storage, unggah, login, atau request mutasi produksi; refresh mengembalikan demo ke kondisi awal.
+- Identitas pengguna berasal dari session. Menu Teman Kelas dan Profilku membuka direktori anggota dan profil dengan aturan privasi. Lihat [akun & profil](./membership-auth.md).
+- [Cerita Kelas](./posts.md), komentar, dan suka tersimpan melalui Livewire dengan Policy dan pembatasan kelas. Komponen feed yang sama tersedia di dashboard dan `/feed`.
+- [Agenda](./events.md) menampilkan kegiatan terdekat dari database, countdown, dan tautan detail untuk konfirmasi kehadiran. Waktu ditampilkan dalam WIB; status dan countdown diperbarui dengan polling setiap 60 detik selama halaman aktif.
+- Pengumuman, ulang tahun, polling, album, dan notifikasi masih memakai data contoh. Voting demo hanya bertahan selama halaman terbuka. Pencarian dashboard berupa pencarian shortcut/konten contoh, belum pencarian seluruh data; shortcut Agenda membuka `/events`.
 - Dialog menggunakan elemen native `dialog` (focus trap, Escape), label form, status/error yang dapat dibaca pembaca layar, dan dukungan reduced motion.
 - Foto ilustrasi AI tersimpan lokal di `src/public/img/dashboard/campus-friends.png`; bukan foto anggota asli.
 
-Spesifikasi di bawah tetap merupakan target fitur produksi. Sebelum mengganti data contoh dengan data asli, implementasikan auth, membership, visibility, Policy, dan validasi server. Interaksi Alpine demo bukan pengganti aturan bisnis tersebut.
+Spesifikasi di bawah dipertahankan sebagai rancangan lengkap. Fitur yang sudah aktif memakai auth, membership, Policy, serta validasi server. Widget yang masih demo tetap memerlukan integrasi data dan aturan aksesnya sendiri sebelum digunakan sebagai fitur produksi.
 
 ## Tujuan
 

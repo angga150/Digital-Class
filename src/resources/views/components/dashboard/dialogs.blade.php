@@ -15,12 +15,6 @@
             <div class="flex items-center gap-4 rounded-2xl bg-[#fff3c8] p-4"><x-avatar initials="R" tone="sage" /><div class="flex-1"><p class="font-semibold">Rani</p><p class="mt-1 text-sm text-muted">{{ now('Asia/Jakarta')->addDays(2)->locale('id')->translatedFormat('j F') }}</p></div><span class="text-xs font-semibold text-orange-dark">2 hari lagi</span><x-icon name="cake" class="text-orange" :size="28" /></div>
             <p class="mt-5 text-xs leading-6 text-muted">Pada versi lengkap, hanya ulang tahun yang diizinkan pemiliknya yang ditampilkan. Tahun lahir tidak ditampilkan.</p>
         </section>
-        <section x-show="modal === 'event'" class="space-y-5">
-            <span class="inline-flex rounded-full bg-sage px-3 py-1 text-xs font-semibold text-[#526443]">3 hari lagi · contoh agenda</span>
-            <h3 class="text-xl font-bold">Presentasi kelompok</h3>
-            <p class="text-sm leading-6 text-muted">Siapkan hasil kerja kelompok dan bahan presentasi. Setiap kelompok mendapat waktu untuk berbagi dan tanya jawab.</p>
-            <div class="space-y-3 rounded-2xl bg-paper p-4 text-sm"><p class="flex items-center gap-3"><x-icon name="calendar" />{{ now('Asia/Jakarta')->addDays(3)->locale('id')->translatedFormat('l, j F Y') }}</p><p class="flex items-center gap-3"><x-icon name="clock" />09.00 WIB</p><p class="flex items-center gap-3"><x-icon name="pin" />Ruang B.204</p></div>
-        </section>
         <section x-show="modal === 'memory'">
             <img src="{{ asset('img/dashboard/campus-friends.png') }}" width="1774" height="887" alt="Foto ilustrasi AI, lima mahasiswa berbincang bersama di taman kampus" class="w-full rounded-2xl">
             <p class="mt-4 text-sm leading-6">Obrolan setelah kelas yang selalu kepanjangan. Hal kecil begini yang nanti paling kita kangenin.</p>
@@ -33,8 +27,8 @@
         </section>
         <section x-show="modal === 'settings'" class="space-y-4 text-sm leading-7">
             <p>Ini pratinjau dashboard <strong>Digital Class</strong>, dibuat dengan Laravel, Livewire, dan Tailwind CSS.</p>
-            <div class="rounded-2xl bg-[#fff7e9] p-4"><p class="font-semibold">Coba dengan bebas</p><p class="mt-1 text-muted">Agenda, ulang tahun, notifikasi, galeri contoh, dan polling masih berupa pratinjau. Pilihan polling kembali ke awal saat halaman dimuat ulang.</p></div>
-            <p class="text-muted">Akun, profil, cerita teks, komentar, dan tanda suka sudah tersimpan. Buka Profilku untuk mengubah foto, cerita pribadi, dan privasi. Cerita kelas hanya terlihat oleh anggota kelas yang sama.</p>
+            <div class="rounded-2xl bg-[#fff7e9] p-4"><p class="font-semibold">Coba dengan bebas</p><p class="mt-1 text-muted">Ulang tahun, notifikasi, galeri contoh, dan polling masih berupa pratinjau. Pilihan polling kembali ke awal saat halaman dimuat ulang.</p></div>
+            <p class="text-muted">Akun, profil, cerita, komentar, suka, agenda, dan konfirmasi kehadiran sudah tersimpan. Buka Profilku untuk mengubah foto, cerita pribadi, dan privasi. Cerita kelas hanya terlihat oleh anggota kelas yang sama.</p>
         </section>
     </div>
 </dialog>

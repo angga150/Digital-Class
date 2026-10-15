@@ -16,7 +16,7 @@ document.addEventListener('alpine:init', () => {
         get searchResults() {
             const entries = [
                 { label: 'Cerita kelas · kabar terbaru dari teman', target: 'cerita' },
-                { label: 'Agenda · presentasi kelompok', modal: 'event' },
+                { label: 'Agenda · jadwal kegiatan kelas', modal: 'event' },
                 { label: 'Rani · ulang tahun', modal: 'birthdays' },
                 { label: 'Teman kelas · cari anggota kelasmu', modal: 'members' },
                 { label: 'Kenangan · album kehidupan kampus', target: 'kenangan' },
@@ -31,6 +31,10 @@ document.addEventListener('alpine:init', () => {
             return [{ label: 'Taman kampus', percent }, { label: 'Kantin', percent: 100 - percent }];
         },
         openModal(name) {
+            if (name === 'event') {
+                window.location.href = document.body.dataset.eventsUrl;
+                return;
+            }
             if (name === 'compose') {
                 document.getElementById('story-compose')?.scrollIntoView({ behavior: this.scrollBehavior() });
                 document.getElementById('story-body')?.focus({ preventScroll: true });

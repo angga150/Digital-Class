@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventRsvp extends Model
 {
+    protected static function booted(): void
+    {
+        static::addGlobalScope('current_class', fn (Builder $query) => $query->whereHas('event'));
+    }
+
     protected $fillable = [
         'event_id',
         'user_id',

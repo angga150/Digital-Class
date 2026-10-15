@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MemberController;
 use App\Http\Middleware\EnsureClassMember;
+use App\Livewire\Agenda\Detail;
+use App\Livewire\Agenda\Index;
 use App\Livewire\Membership\EditProfile;
 use App\Livewire\Membership\MemberDirectory;
 use App\Livewire\Stories\Feed;
@@ -48,7 +50,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::middleware(EnsureClassMember::class)->group(function () {
         Route::livewire('/', 'pages::dashboard')->name('dashboard');
         Route::get('/feed', Feed::class)->name('feed');
-        Route::livewire('/events', 'pages::events')->name('events');
+        Route::get('/events', Index::class)->name('events');
+        Route::get('/events/{event}', Detail::class)->name('events.show');
         Route::livewire('/gallery', 'pages::gallery')->name('gallery');
         Route::get('/profile', EditProfile::class)->name('profile');
         Route::get('/members', MemberDirectory::class)->name('members');
