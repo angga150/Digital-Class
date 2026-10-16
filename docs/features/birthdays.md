@@ -11,7 +11,7 @@ Kalender dan widget ulang tahun diimplementasikan pada 16 Oktober 2026 di direkt
 - Tanggal hari ini dan selisih hari memakai WIB (`Asia/Jakarta`). Tanggal yang sudah lewat dipindahkan ke perayaan tahun berikutnya. Untuk 29 Februari, perayaan jatuh pada 28 Februari di tahun biasa dan tetap 29 Februari pada tahun kabisat.
 - Halaman dan widget memperbarui data setiap 60 detik ketika aktif. Status dihitung saat dibaca, tanpa scheduler atau email otomatis.
 - Tidak menampilkan usia atau tahun lahir, termasuk jika pemilik mengizinkan tahun lahir di halaman profil. Tahun pada tanggal “Perayaan berikutnya” adalah tahun perayaan mendatang.
-- Shortcut pencarian dashboard dan tombol kalender membuka halaman asli. Modal ulang tahun contoh tidak dipakai lagi. Papan notifikasi secara keseluruhan masih demo.
+- Tombol kalender membuka halaman asli. Modal ulang tahun contoh tidak dipakai lagi. [Notifikasi dalam aplikasi](./notifications.md) sudah aktif untuk komentar, suka, dan pengumuman, tetapi belum mengirim pengingat ulang tahun.
 
 ## Privasi dan sumber data
 

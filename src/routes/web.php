@@ -57,6 +57,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         Route::get('/polls', App\Livewire\Polling\Index::class)->name('polls');
         Route::get('/polls/{pollId}', Ballot::class)->whereNumber('pollId')->name('polls.show');
         Route::get('/search', App\Livewire\Search\Index::class)->name('search');
+        Route::get('/notifications', App\Livewire\Notifications\Index::class)->name('notifications');
         Route::get('/birthdays', App\Livewire\Birthdays\Index::class)->name('birthdays');
         Route::get('/announcements', App\Livewire\Announcements\Index::class)->name('announcements');
         Route::get('/announcements/{post}', App\Livewire\Announcements\Detail::class)->name('announcements.show');

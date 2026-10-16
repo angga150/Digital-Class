@@ -26,7 +26,7 @@ Vote dan penutupan manual memakai transaksi dengan lock pada induk polling. Pili
 
 `user_id` tetap disimpan untuk pencegahan suara ganda; anonim berarti identitas tidak ditampilkan melalui aplikasi, bukan anonimisasi terhadap pengelola database. Pengguna dapat melihat pilihannya sendiri. Polling lama non-anonim juga hanya menampilkan hasil agregat. Polling lama dengan `allow_multiple = true` dipertahankan tetapi tidak menerima suara baru karena MVP ini khusus satu pilihan.
 
-Role pengurus saat ini adalah `admin`; Super Admin pada rancangan awal belum tersedia. Pengaturan hasil tidak bisa diedit setelah terbit. Notifikasi, ekspor, polling publik, pilihan ganda, dan pengubahan suara belum termasuk tahap ini.
+Role pengurus saat ini adalah `admin`; Super Admin pada rancangan awal belum tersedia. Pengaturan hasil tidak bisa diedit setelah terbit. Notifikasi polling, ekspor, polling publik, pilihan ganda, dan pengubahan suara belum termasuk tahap ini.
 
 ## Menjalankan dan memverifikasi
 

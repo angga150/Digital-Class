@@ -3,6 +3,7 @@
 namespace App\Livewire\Announcements;
 
 use App\Models\Post;
+use App\Support\ClassActivity;
 use App\Support\CurrentClass;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -76,10 +77,11 @@ class Index extends Component
                 Gate::authorize('manageAnnouncement', $post);
                 $post->update(['content' => $this->body, 'is_pinned' => $this->pinned]);
             } else {
-                Post::create([
+                $post = Post::create([
                     'class_id' => CurrentClass::membership()->class_id, 'user_id' => auth()->id(),
                     'type' => 'announcement', 'content' => $this->body, 'is_pinned' => $this->pinned,
                 ]);
+                ClassActivity::announced($post);
             }
         });
         $this->closeForm();

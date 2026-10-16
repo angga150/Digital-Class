@@ -5,6 +5,7 @@ namespace App\Livewire\Stories;
 use App\Models\ClassMember;
 use App\Models\Post;
 use App\Models\PostComment;
+use App\Support\ClassActivity;
 use App\Support\CurrentClass;
 use App\Support\MemberProfile;
 use Illuminate\Support\Facades\DB;
@@ -49,6 +50,9 @@ class Feed extends Component
     {
         if ($postId !== null) {
             $this->focusedPost = Post::findOrFail($postId)->id;
+            if (request()->boolean('comments')) {
+                $this->discussion = $this->focusedPost;
+            }
         }
     }
 
@@ -162,7 +166,10 @@ class Feed extends Component
             $post = Post::lockForUpdate()->findOrFail($id);
             Gate::authorize('interact', $post);
             if ($liked) {
-                $post->likes()->firstOrCreate(['user_id' => auth()->id()]);
+                $like = $post->likes()->firstOrCreate(['user_id' => auth()->id()]);
+                if ($like->wasRecentlyCreated) {
+                    ClassActivity::liked($post, auth()->id());
+                }
             } else {
                 $post->likes()->where('user_id', auth()->id())->delete();
             }
@@ -185,7 +192,8 @@ class Feed extends Component
             $post = Post::lockForUpdate()->findOrFail($this->discussion);
             Gate::authorize('create', [PostComment::class, $post]);
             $this->throttle('comment', 15);
-            $post->comments()->create(['user_id' => auth()->id(), 'content' => $content]);
+            $comment = $post->comments()->create(['user_id' => auth()->id(), 'content' => $content]);
+            ClassActivity::commented($post, $comment);
             $post->update(['comments_count' => $post->comments()->count()]);
         });
         $this->reset('commentBody', 'commentLimit');

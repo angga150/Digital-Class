@@ -5,9 +5,8 @@ document.addEventListener('alpine:init', () => {
         modal: '',
         toast: '',
         toastTimer: null,
-        notificationsRead: false,
         get modalTitle() {
-            return { announcement: 'Kabar untuk kelas', birthdays: 'Kalender ulang tahun', event: 'Agenda kelas', memory: 'Selesai tugas, lanjut cerita.', notifications: 'Pemberitahuan', settings: 'Tentang dashboard ini' }[this.modal] || '';
+            return { announcement: 'Kabar untuk kelas', birthdays: 'Kalender ulang tahun', event: 'Agenda kelas', memory: 'Selesai tugas, lanjut cerita.', settings: 'Tentang dashboard ini' }[this.modal] || '';
         },
         openModal(name) {
             if (name === 'announcement') {
@@ -32,7 +31,6 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
             this.modal = name;
-            if (name === 'notifications') this.notificationsRead = true;
             const dialog = document.getElementById('dashboard-dialog');
             const focusId = 'dialog-title';
             this.$nextTick(() => {

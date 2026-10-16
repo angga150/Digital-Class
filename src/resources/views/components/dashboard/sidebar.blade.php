@@ -15,7 +15,7 @@
             <p class="text-sm font-semibold">Cerita kita, rumah kita.</p>
             <p class="mt-1.5 text-xs leading-5 text-muted">Hal kecil hari ini bisa jadi kenangan favorit nanti.</p>
         </div>
-        <button @click="openModal('settings')" class="nav-item w-full"><x-icon name="settings" />Tentang demo</button>
+        <button @click="openModal('settings')" class="nav-item w-full"><x-icon name="settings" />Tentang kelas</button>
         <div class="mt-4 border-t border-line pt-5">
             <a href="{{ route('profile') }}" class="flex w-full items-center gap-3 rounded-xl p-1 text-left">
                 <x-avatar :initials="auth()->user()->initials" /><span class="min-w-0 flex-1"><span class="block truncate text-sm font-semibold">{{ auth()->user()->display_name }}</span><span class="text-xs text-muted">Profil & privasi</span></span><x-icon name="chevron" :size="16" />

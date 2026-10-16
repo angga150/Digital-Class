@@ -1,0 +1,1 @@
+<a href="{{ route('notifications') }}" wire:poll.60s class="icon-button relative" aria-label="Notifikasi, {{ $unread }} belum dibaca"><x-icon name="bell" :size="22" />@if($unread > 0)<span class="absolute -right-1 -top-1 min-w-5 rounded-full bg-orange px-1.5 py-0.5 text-center text-[10px] font-bold text-white">{{ $unread > 99 ? '99+' : $unread }}</span>@endif</a>

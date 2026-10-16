@@ -1,6 +1,6 @@
 # Akun, keanggotaan, dan profil
 
-Update lanjutan: [Cerita Kelas](./posts.md) sekarang menyimpan cerita teks, komentar, dan suka. [Agenda Kelas](./events.md) menyimpan kegiatan serta konfirmasi kehadiran, dan [Polling](./polls.md) menyimpan suara anggota. [Kalender Ulang Tahun](./birthdays.md) memakai tanggal dan privasi profil; tanggal privat tidak ditampilkan sebagai sapaan kepada pengguna lain. Penjelasan batas sosial demo di catatan tahap akun di bawah adalah kondisi sebelum fitur-fitur tersebut ditambahkan; galeri dan notifikasi masih contoh.
+Update lanjutan: [Cerita Kelas](./posts.md) sekarang menyimpan cerita teks, komentar, dan suka. [Agenda Kelas](./events.md) menyimpan kegiatan serta konfirmasi kehadiran, dan [Polling](./polls.md) menyimpan suara anggota. [Kalender Ulang Tahun](./birthdays.md) memakai tanggal dan privasi profil; tanggal privat tidak ditampilkan sebagai sapaan kepada pengguna lain. Penjelasan batas sosial demo di catatan tahap akun di bawah adalah kondisi sebelum fitur-fitur tersebut ditambahkan; galeri masih contoh. [Notifikasi](./notifications.md), [Simpan Cerita](./bookmarks.md), dan [Pencarian Kelas](./search.md) kini sudah aktif.
 
 Implementasi 15 Oktober 2026 berada di folder utama `C:/laragon/www/website kelas`, aplikasi Laravel di `src/`. Stack tetap Laravel, Livewire, Tailwind, dan Alpine untuk demo dashboard. Tidak ada paket autentikasi baru; session, password broker, dan email verification memakai Laravel.
 

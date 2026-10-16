@@ -2,7 +2,7 @@
 
 ## Status
 
-Tampilan scrapbook diimplementasikan pada 6 Oktober 2026. Per 16 Oktober 2026, autentikasi, profil, Cerita Kelas, Agenda, Polling, Kalender Ulang Tahun, dan Pengumuman sudah terhubung ke database; galeri dan notifikasi masih demo.
+Tampilan scrapbook diimplementasikan pada 6 Oktober 2026. Per 16 Oktober 2026, autentikasi, profil, Cerita Kelas, Agenda, Polling, Kalender Ulang Tahun, Pengumuman, Simpan Cerita, Pencarian, dan Notifikasi sudah aktif; galeri masih demo.
 
 Dashboard memakai halaman Livewire, komponen Blade di `src/resources/views/components/dashboard/`, Tailwind CSS, dan Alpine bawaan Livewire untuk interaksi demo. Desain mengacu pada `docs/design/dashboard-concept-v1.png`.
 
@@ -13,7 +13,8 @@ Dashboard memakai halaman Livewire, komponen Blade di `src/resources/views/compo
 - [Polling](./polls.md) menampilkan polling aktif dan menyimpan satu suara per akun, dengan hasil agregat sesuai pengaturan akses. Link Semua polling membuka `/polls` untuk melihat arsip atau membuat polling sebagai pengurus.
 - [Ulang tahun](./birthdays.md) menampilkan teman pada hari perayaan terdekat dalam 30 hari, mengikuti privasi profil. Semua teman pada tanggal yang sama ditampilkan; kalender lengkap tersedia di `/birthdays`.
 - [Papan Pengumuman](./announcements.md) memakai post pengumuman asli. Banner memprioritaskan sematan lalu pengumuman terbaru dan membuka detail. Pengurus dapat mengelolanya melalui `/announcements`.
-- [Pencarian Kelas](./search.md) mencari data asli per kategori melalui header desktop dan tombol pencarian HP. [Simpan Cerita](./bookmarks.md) menyediakan daftar pribadi di feed. Album dan notifikasi masih memakai data contoh.
+- [Pencarian Kelas](./search.md) mencari data asli per kategori melalui header desktop dan tombol pencarian HP. [Simpan Cerita](./bookmarks.md) menyediakan daftar pribadi di feed.
+- [Notifikasi](./notifications.md) menampilkan komentar, suka, dan pengumuman baru dengan badge belum dibaca serta daftar pribadi. Album masih memakai data contoh.
 - Dialog menggunakan elemen native `dialog` (focus trap, Escape), label form, status/error yang dapat dibaca pembaca layar, dan dukungan reduced motion.
 - Foto ilustrasi AI tersimpan lokal di `src/public/img/dashboard/campus-friends.png`; bukan foto anggota asli.
 

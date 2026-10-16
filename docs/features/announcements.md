@@ -12,7 +12,7 @@ Diimplementasikan pada 16 Oktober 2026 di direktori utama `C:/laragon/www/websit
 - Isi wajib berupa teks nonkosong, maksimal 2.000 karakter. Awal tulisan menjadi ringkasan banner. Tidak ada judul terpisah atau unggah lampiran pada tahap ini.
 - Banner dashboard memprioritaskan pengumuman disematkan, lalu waktu terbit dan ID terbaru. Beberapa pengumuman boleh disematkan; edit isi tidak mengubah urutan waktu terbit. Jika tidak ada sematan, banner menampilkan pengumuman terbaru. Jika kosong, tampil tautan ramah menuju papan kabar.
 - Semua anggota kelas aktif boleh membaca, termasuk yang belum verifikasi email. Pengumuman juga tetap muncul di Cerita Kelas, dengan label dan tautan detail; suka serta komentar memakai fitur cerita yang sudah ada.
-- Papan, detail, dan banner memperbarui data setiap 60 detik ketika aktif. Shortcut pencarian dan tombol Papan kabar menuju halaman asli. Notifikasi masih berupa demo, bukan pengiriman pemberitahuan otomatis.
+- Papan, detail, dan banner memperbarui data setiap 60 detik ketika aktif. [Pencarian Kelas](./search.md) mencari pengumuman asli. Penerbitan baru kini menghasilkan [notifikasi dalam aplikasi](./notifications.md) bagi teman sekelas; edit/sematan tidak mengirim ulang dan tidak ada email/push.
 
 ## Penyimpanan dan izin
 
@@ -24,7 +24,7 @@ Policy update/delete untuk pengumuman juga berlaku lewat Cerita Kelas. Penulis y
 
 Penghapusan menggunakan soft-delete: post, komentar, dan suka dipertahankan di database, tetapi pengumuman tidak lagi terlihat di banner, papan, detail, atau feed. Belum ada restore di UI. Form edit yang tertinggal setelah post dihapus ditolak. Status sematan memakai nilai tujuan (true/false), sehingga permintaan berulang tidak membalik status tanpa sengaja.
 
-Konten ditampilkan sebagai teks yang di-escape, bukan HTML. Papan dan detail tidak menampilkan email atau nickname privat penulis. Identitas penulis di feed tetap mengikuti presenter profil. Belum ada status draft, penjadwalan, kedaluwarsa otomatis, read receipt, audit riwayat revisi, atau notifikasi otomatis.
+Konten ditampilkan sebagai teks yang di-escape, bukan HTML. Papan dan detail tidak menampilkan email atau nickname privat penulis. Identitas penulis di feed tetap mengikuti presenter profil. Belum ada status draft, penjadwalan, kedaluwarsa otomatis, read receipt untuk pengurus, atau audit riwayat revisi. Status baca notifikasi hanya tersedia bagi penerimanya sendiri.
 
 ## Verifikasi
 
