@@ -50,6 +50,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::middleware(EnsureClassMember::class)->group(function () {
         Route::livewire('/', 'pages::dashboard')->name('dashboard');
         Route::get('/feed', Feed::class)->name('feed');
+        Route::get('/feed/{postId}', Feed::class)->whereNumber('postId')->name('feed.show');
         Route::get('/events', Index::class)->name('events');
         Route::get('/events/{event}', Detail::class)->name('events.show');
         Route::get('/polls', App\Livewire\Polling\Index::class)->name('polls');

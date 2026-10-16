@@ -57,6 +57,11 @@ class Post extends Model
         return $this->hasMany(PostComment::class);
     }
 
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(PostBookmark::class);
+    }
+
     public function isLikedBy(?User $user): bool
     {
         if (! $user) {

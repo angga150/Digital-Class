@@ -18,11 +18,15 @@
         <p class="font-semibold">Cerita pertamamu ditunggu 🌿</p><p class="mt-2 text-sm leading-6 text-muted">Verifikasi email untuk menulis cerita, berkomentar, dan memberi suka. Kamu tetap bisa membaca cerita kelas.</p><a href="{{ route('verification.notice') }}" class="quiet-button mt-3">Verifikasi email <x-icon name="arrow" :size="16" /></a>
         @endif
     </div>
-    <div class="mb-5 flex items-center gap-2" aria-label="Filter cerita">
-        <button type="button" wire:click="$set('filter', 'all')" aria-pressed="{{ $filter !== 'mine' ? 'true' : 'false' }}" class="quiet-button {{ $filter !== 'mine' ? 'bg-orange/10' : 'text-muted' }}">Semua cerita</button>
+    @if(! $focusedPost)
+    <div class="mb-5 flex flex-wrap items-center gap-2" aria-label="Filter cerita">
+        <button type="button" wire:click="$set('filter', 'all')" aria-pressed="{{ $filter === 'all' ? 'true' : 'false' }}" class="quiet-button {{ $filter === 'all' ? 'bg-orange/10' : 'text-muted' }}">Semua cerita</button>
         <button type="button" wire:click="$set('filter', 'mine')" aria-pressed="{{ $filter === 'mine' ? 'true' : 'false' }}" class="quiet-button {{ $filter === 'mine' ? 'bg-orange/10' : 'text-muted' }}">Ceritaku</button>
+        <button type="button" wire:click="$set('filter', 'saved')" aria-pressed="{{ $filter === 'saved' ? 'true' : 'false' }}" class="quiet-button {{ $filter === 'saved' ? 'bg-orange/10' : 'text-muted' }}">Tersimpan</button>
         <span wire:loading.delay wire:target="filter,loadMore" class="ml-auto text-xs text-muted" role="status">Memuat…</span>
     </div>
+    @endif
+    @if(! $focusedPost && $filter === 'saved')<p class="mb-5 text-xs leading-6 text-muted">Daftar pribadimu. Cerita yang dihapus atau sudah tidak bisa kamu akses tidak akan ditampilkan.</p>@endif
     <div class="space-y-5">
         @forelse($posts as $post)
         @php($author = $authors->get($post->user_id))
@@ -47,7 +51,7 @@
                     <button type="button" wire:click="setLike({{ $post->id }}, {{ $post->liked ? 'false' : 'true' }})" wire:loading.attr="disabled" @disabled(!auth()->user()->hasVerifiedEmail()) aria-pressed="{{ $post->liked ? 'true' : 'false' }}" aria-label="{{ $post->liked ? 'Batal suka' : 'Suka' }} cerita {{ $post->id }}" class="quiet-button gap-2 px-3 {{ $post->liked ? 'text-orange-dark' : 'text-muted' }} disabled:opacity-50"><x-icon name="heart" :size="20" :class="$post->liked ? 'fill-orange/20' : ''" /><span>{{ $post->likes_count }}</span></button>
                     <button type="button" wire:click="openComments({{ $post->id }})" aria-expanded="{{ $discussion === $post->id ? 'true' : 'false' }}" aria-label="Komentar cerita {{ $post->id }}" class="quiet-button gap-2 px-3 text-muted"><x-icon name="comment" :size="19" /><span>{{ $post->comments_count }}</span></button>
                 </div>
-                <span class="text-[10px] text-muted">Bersama, lebih berwarna</span>
+                <div class="flex flex-wrap items-center justify-end gap-1"><a href="{{ route('feed.show', $post->id) }}" class="quiet-button px-2 text-xs">Buka</a><button type="button" wire:click="setBookmark({{ $post->id }}, {{ $post->bookmarked ? 'false' : 'true' }})" wire:loading.attr="disabled" @disabled(!auth()->user()->hasVerifiedEmail()) aria-pressed="{{ $post->bookmarked ? 'true' : 'false' }}" class="quiet-button px-2 text-xs {{ $post->bookmarked ? 'text-orange-dark bg-orange/10' : 'text-muted' }}">{{ $post->bookmarked ? 'Tersimpan ✓' : 'Simpan' }}</button></div>
             </div>
             @if($discussion === $post->id)
             <section class="border-t border-line bg-paper/50 p-5" aria-label="Komentar">
@@ -70,7 +74,7 @@
             @endif
         </article>
         @empty
-        <div class="card p-8 text-center"><span class="text-3xl" aria-hidden="true">🌱</span><h3 class="mt-4 font-bold">{{ $filter === 'mine' ? 'Cerita pertamamu dimulai di sini.' : 'Ruang cerita masih sepi.' }}</h3><p class="mt-2 text-sm leading-6 text-muted">Nggak harus sesuatu yang besar. Kabar kecil hari ini juga layak dibagi.</p></div>
+        <div class="card p-8 text-center"><span class="text-3xl" aria-hidden="true">🌱</span><h3 class="mt-4 font-bold">{{ $filter === 'saved' ? 'Belum ada cerita tersimpan.' : ($filter === 'mine' ? 'Cerita pertamamu dimulai di sini.' : 'Ruang cerita masih sepi.') }}</h3><p class="mt-2 text-sm leading-6 text-muted">{{ $filter === 'saved' ? 'Tekan Simpan pada cerita yang ingin kamu baca lagi.' : 'Nggak harus sesuatu yang besar. Kabar kecil hari ini juga layak dibagi.' }}</p></div>
         @endforelse
     </div>
     @if($hasMore)<button type="button" wire:click="loadMore" wire:loading.attr="disabled" class="quiet-button mt-5 w-full border border-line bg-white">Muat cerita sebelumnya</button>@elseif($posts->isNotEmpty())<p class="py-6 text-center text-xs text-muted">Sudah sampai di cerita terakhir. Giliran kamu? ☺</p>@endif

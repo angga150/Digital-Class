@@ -14,6 +14,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Layout('layouts.member')]
@@ -38,7 +39,32 @@ class Feed extends Component
     #[Locked]
     public int $commentLimit = 10;
 
+    #[Url]
     public string $filter = 'all';
+
+    #[Locked]
+    public ?int $focusedPost = null;
+
+    public function mount(?int $postId = null): void
+    {
+        if ($postId !== null) {
+            $this->focusedPost = Post::findOrFail($postId)->id;
+        }
+    }
+
+    public function setBookmark(int $id, bool $saved): void
+    {
+        DB::transaction(function () use ($id, $saved) {
+            $post = Post::lockForUpdate()->findOrFail($id);
+            Gate::authorize('interact', $post);
+            if ($saved) {
+                $post->bookmarks()->firstOrCreate(['user_id' => auth()->id()]);
+            } else {
+                $post->bookmarks()->where('user_id', auth()->id())->delete();
+            }
+        });
+        $this->notice = $saved ? 'Cerita tersimpan untuk kamu baca lagi. Hanya kamu yang melihat daftar ini.' : 'Cerita dilepas dari simpananmu.';
+    }
 
     #[Locked]
     public string $notice = '';
@@ -124,6 +150,10 @@ class Feed extends Component
             $this->cancelEdit();
         }
         $this->notice = 'Cerita dihapus dari feed. Datanya tetap tersimpan untuk pemulihan.';
+        if ($this->focusedPost === $id) {
+            $this->focusedPost = null;
+            $this->redirectRoute('feed');
+        }
     }
 
     public function setLike(int $id, bool $liked): void
@@ -188,8 +218,14 @@ class Feed extends Component
     {
         abort_unless(CurrentClass::membership(), 403);
         $query = Post::with('user')->withCount(['likes', 'comments'])
+            ->withExists('bookmarks as bookmarked')
             ->withExists(['likes as liked' => fn ($query) => $query->where('user_id', auth()->id())]);
-        if ($this->filter === 'mine') {
+        if ($this->focusedPost) {
+            Post::findOrFail($this->focusedPost);
+            $query->whereKey($this->focusedPost);
+        } elseif ($this->filter === 'saved') {
+            $query->whereHas('bookmarks');
+        } elseif ($this->filter === 'mine') {
             $query->where('user_id', auth()->id());
         }
         $posts = $query->orderByDesc('created_at')->orderByDesc('id')->limit($this->limit + 1)->get();

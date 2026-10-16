@@ -7,6 +7,7 @@
         <a href="#{{ $id }}" @click="active = '{{ $id }}'" class="nav-item" :class="{ 'is-active': active === '{{ $id }}' }" :aria-current="active === '{{ $id }}' ? 'location' : null"><x-icon :name="$icon" />{{ $label }}</a>
         @endforeach
         <a href="{{ route('members') }}" class="nav-item w-full"><x-icon name="users" />Teman Kelas</a>
+        <a href="{{ route('feed', ['filter' => 'saved']) }}" class="nav-item w-full"><x-icon name="feed" />Cerita Tersimpan</a>
     </nav>
     <div class="relative mt-auto">
         <div class="mb-6 rounded-2xl bg-sage/60 p-4">

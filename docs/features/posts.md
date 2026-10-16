@@ -2,6 +2,8 @@
 
 ## Status
 
+Tambahan 16 Oktober 2026: [Simpan Cerita](./bookmarks.md) menyediakan simpanan pribadi dan tautan langsung `/feed/{postId}`.
+
 Tahap cerita teks diimplementasikan (15 Oktober 2026): tulis, edit, hapus lunak, komentar, suka, filter Ceritaku, dan pemuatan cerita sebelumnya. Komponen Livewire yang sama dipakai di dashboard dan `/feed`.
 
 Gambar, pilihan visibility per cerita, report/moderasi dengan audit log, dan infinite scroll otomatis belum termasuk tahap ini. Semua cerita saat ini bersifat `class_only`; pemuatan lanjutan menggunakan tombol agar tetap mudah diakses.
