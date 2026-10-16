@@ -9,7 +9,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body x-data="classDashboard" data-user-name="{{ auth()->user()->display_name }}" data-user-initials="{{ auth()->user()->initials }}" data-members-url="{{ route('members') }}" data-profile-url="{{ route('profile') }}" data-events-url="{{ route('events') }}" data-birthdays-url="{{ route('birthdays') }}">
+<body x-data="classDashboard" data-user-name="{{ auth()->user()->display_name }}" data-user-initials="{{ auth()->user()->initials }}" data-members-url="{{ route('members') }}" data-profile-url="{{ route('profile') }}" data-events-url="{{ route('events') }}" data-birthdays-url="{{ route('birthdays') }}" data-announcements-url="{{ route('announcements') }}">
     <a href="#main-content" class="fixed left-4 top-4 z-50 -translate-y-32 rounded-xl bg-white p-3 focus:translate-y-0">Lewati ke konten</a>
     <x-dashboard.sidebar />
     <div class="lg:pl-[232px]">

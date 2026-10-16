@@ -18,12 +18,16 @@ document.addEventListener('alpine:init', () => {
                 { label: 'Ulang tahun · kalender teman sekelas', modal: 'birthdays' },
                 { label: 'Teman kelas · cari anggota kelasmu', modal: 'members' },
                 { label: 'Kenangan · album kehidupan kampus', target: 'kenangan' },
-                { label: 'Info kelas · ruang B.204', modal: 'announcement' },
+                { label: 'Pengumuman · papan kabar kelas', modal: 'announcement' },
             ];
             const query = this.search.trim().toLocaleLowerCase('id');
             return query ? entries.filter(entry => entry.label.toLocaleLowerCase('id').includes(query)) : [];
         },
         openModal(name) {
+            if (name === 'announcement') {
+                window.location.href = document.body.dataset.announcementsUrl;
+                return;
+            }
             if (name === 'birthdays') {
                 window.location.href = document.body.dataset.birthdaysUrl;
                 return;

@@ -11,14 +11,14 @@ Gambar, pilihan visibility per cerita, report/moderasi dengan audit log, dan inf
 - Memakai tabel yang sudah berjalan: `posts`, `post_comments`, `post_likes`. Rancangan komentar/reaction polymorphic di bawah adalah arah lanjutan, belum migrasi skema.
 - Migration tambahan hanya menambah `deleted_at` pada post dan komentar; data lama dipertahankan. Tidak menjalankan ulang seeder. Cerita seed lama tetap tampil jika ada pada kelas pengguna.
 - `Post` memiliki global scope kelas aktif; komentar dan suka mengikuti scope induk post, termasuk penyembunyian saat induk terhapus.
-- Semua mutasi melalui Policy dan memerlukan email terverifikasi. Hanya penulis boleh edit; penulis atau pengurus kelas boleh menghapus. Role pengurus mengikuti skema saat ini (`admin`).
+- Semua mutasi melalui Policy dan memerlukan email terverifikasi. Untuk cerita biasa, hanya penulis boleh edit; penulis atau pengurus kelas boleh menghapus. [Pengumuman resmi](./announcements.md) hanya boleh diedit/dihapus oleh pengurus, termasuk lewat feed. Role pengurus mengikuti skema saat ini (`admin`).
 - Konten teks maksimum 2.000 karakter; komentar 500. Whitespace kosong ditolak dan output di-escape oleh Blade. Posting dibatasi 5/menit, komentar 15/menit per akun.
 - Like memakai desired state (suka/tidak), unique constraint `(post_id, user_id)`, dan transaksi dengan lock induk, sehingga pengulangan request tidak menambah reaction ganda. Counter UI dihitung dari relasi, bukan angka seed.
 - Edit, hapus, komentar, dan suka memeriksa ulang izin saat aksi berjalan. Form komentar yang tertinggal setelah post dihapus ditolak.
 - Data penulis melalui presenter profil: nickname privat tidak bocor di feed. Email tidak dikirim ke tampilan. Avatar feed saat ini berupa inisial.
 - Soft-delete mempertahankan data untuk pemulihan administratif; belum ada tombol restore di UI. Jangan menganggapnya recycle bin pengguna.
 - Halaman lama `resources/views/pages/feed.blade.php` tetap disimpan untuk konteks, tetapi route aktif memakai `App/Livewire/Stories/Feed.php` dan `resources/views/livewire/stories/feed.blade.php`.
-- Modal dan state contoh cerita/komentar di dashboard diganti oleh komponen persisten. [Agenda](./events.md), [Polling](./polls.md), dan [Ulang tahun](./birthdays.md) juga sudah terhubung ke database. Galeri dan notifikasi masih contoh yang diberi penjelasan.
+- Modal dan state contoh cerita/komentar di dashboard diganti oleh komponen persisten. [Agenda](./events.md), [Polling](./polls.md), [Ulang tahun](./birthdays.md), dan [Pengumuman](./announcements.md) juga sudah terhubung ke database. Galeri dan notifikasi masih contoh yang diberi penjelasan.
 
 Jalankan `php artisan migrate`, `npm run build`, dan `php artisan test` dari `src/`. Test memakai SQLite in-memory. Database lokal dicadangkan sebelum migration ke `C:/Users/USER/.codex/backups/website-kelas/auth-20261015/database-before-stories.sqlite`.
 

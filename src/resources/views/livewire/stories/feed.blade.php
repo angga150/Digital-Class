@@ -27,6 +27,7 @@
         @forelse($posts as $post)
         @php($author = $authors->get($post->user_id))
         <article wire:key="story-{{ $post->id }}" class="card overflow-hidden">
+            @if($post->type === 'announcement')<a href="{{ route('announcements.show', $post) }}" class="flex items-center gap-2 border-b border-line bg-sage px-5 py-3 text-xs font-semibold text-[#526443]"><x-icon name="megaphone" :size="15" />Pengumuman kelas {{ $post->is_pinned ? '· Disematkan' : '' }}<x-icon name="arrow" :size="14" /></a>@endif
             <div class="flex items-start gap-3 px-5 pt-5">
                 <x-avatar :initials="$author['initials'] ?? mb_strtoupper(mb_substr($post->user->name, 0, 1))" />
                 <div class="min-w-0 flex-1">

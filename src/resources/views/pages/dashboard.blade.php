@@ -23,11 +23,7 @@ new #[Layout('layouts.dashboard')] class extends Component
         <button @click="openModal('compose')" class="primary-button"><x-icon name="pen" :size="17" />Tulis cerita</button>
     </section>
 
-    <button @click="openModal('announcement')" class="mb-5 flex w-full items-center gap-4 rounded-2xl border border-[#dce7ce] bg-sage px-4 py-4 text-left transition hover:bg-[#e1ebd6] sm:px-5">
-        <span class="text-[#547240]"><x-icon name="megaphone" :size="25" /></span>
-        <span class="flex-1"><span class="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-[#59734a]">Papan kabar</span><span class="block text-sm font-semibold">Ruang kuliah besok pindah ke B.204</span></span>
-        <span class="hidden text-xs text-[#59734a] sm:block">Baca info</span><x-icon name="chevron" :size="17" class="text-[#59734a]" />
-    </button>
+    <livewire:announcements.featured />
 
     <section class="paper-grid relative mb-7 overflow-hidden rounded-3xl border border-[#f2e4ce] bg-[#fff0d7] px-6 py-7 sm:px-8 lg:py-8" aria-labelledby="memories-heading">
         <div class="relative z-10 max-w-[65%] sm:max-w-[55%]">

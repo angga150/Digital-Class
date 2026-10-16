@@ -21,12 +21,31 @@ class PostPolicy
 
     public function update(User $user, Post $post): bool
     {
+        if ($post->type === 'announcement') {
+            return $this->manageAnnouncement($user, $post);
+        }
+
         return $this->interact($user, $post) && $user->id === $post->user_id;
     }
 
     public function delete(User $user, Post $post): bool
     {
+        if ($post->type === 'announcement') {
+            return $this->manageAnnouncement($user, $post);
+        }
+
         return $this->interact($user, $post)
             && ($user->id === $post->user_id || CurrentClass::membership($user)?->role === 'admin');
+    }
+
+    public function publishAnnouncement(User $user): bool
+    {
+        return $this->create($user) && CurrentClass::membership($user)?->role === 'admin';
+    }
+
+    public function manageAnnouncement(User $user, Post $post): bool
+    {
+        return $post->type === 'announcement' && $this->interact($user, $post)
+            && $this->publishAnnouncement($user);
     }
 }
