@@ -1,0 +1,15 @@
+<div>
+    <section class="paper-grid mb-7 rounded-3xl border border-line bg-[#fff0d7] p-6 sm:p-8"><p class="text-[10px] font-bold uppercase tracking-widest text-orange-dark">Biar mudah ketemu lagi</p><h1 class="mt-3 text-3xl font-bold tracking-tight">Cari di ruang kelasmu.</h1><p class="mt-3 text-sm leading-6 text-muted">Cerita, kabar, rencana, dan teman. Hanya data dari kelas yang bisa kamu akses.</p></section>
+    <form wire:submit="search" class="mb-5 flex flex-wrap items-end gap-3"><div class="min-w-0 flex-1"><label for="class-search" class="mb-2 block text-sm font-semibold">Apa yang ingin dicari?</label><input id="class-search" type="search" wire:model="q" required minlength="2" maxlength="100" class="field" placeholder="Misalnya: piknik, ujian, atau nama teman"></div><button type="submit" wire:loading.attr="disabled" class="primary-button"><x-icon name="search" :size="18" />Cari</button></form>
+    @error('q')<p role="alert" class="mb-5 text-sm text-red-800">{{ $message }}</p>@enderror
+    <div class="mb-5 flex flex-wrap gap-2" aria-label="Jenis hasil pencarian">@foreach(['stories' => 'Cerita', 'announcements' => 'Pengumuman', 'events' => 'Agenda', 'polls' => 'Polling', 'members' => 'Teman'] as $value => $label)<button type="button" wire:click="$set('category', '{{ $value }}')" aria-pressed="{{ $category === $value ? 'true' : 'false' }}" class="quiet-button {{ $category === $value ? 'bg-orange/10' : 'text-muted' }}">{{ $label }}</button>@endforeach</div>
+    @if($category === 'members')<p class="mb-5 text-xs leading-6 text-muted">Cari dengan nama lengkap. Email dan detail profil pribadi tidak digunakan untuk pencarian.</p>@endif
+    <div wire:loading.delay role="status" class="mb-4 text-xs text-muted">Mencari di kelasmu…</div>
+    @if(! $valid)
+        <div class="card p-10 text-center"><p class="text-4xl" aria-hidden="true">🔎</p><h2 class="mt-4 text-lg font-bold">Mulai dari satu kata.</h2><p class="mt-2 text-sm text-muted">Masukkan 2–100 karakter, lalu pilih jenis hasil yang kamu butuhkan.</p></div>
+    @else
+        <p role="status" class="mb-4 text-xs text-muted">{{ $results->total() }} hasil pada kategori ini</p>
+        <div class="space-y-4">@forelse($cards as $card)<a wire:key="result-{{ $category }}-{{ $card['id'] }}" href="{{ $card['url'] }}" class="card block p-5 transition hover:border-orange/40"><p class="text-xs font-semibold text-orange-dark">{{ $card['meta'] }}</p><h2 class="mt-2 break-words text-lg font-bold">{{ $card['title'] }}</h2><p class="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-muted">{{ $card['excerpt'] }}</p><span class="mt-3 inline-flex items-center gap-2 text-xs font-semibold">Buka hasil <x-icon name="arrow" :size="15" /></span></a>@empty<div class="card p-10 text-center"><h2 class="text-lg font-bold">Belum ketemu di kategori ini.</h2><p class="mt-2 text-sm leading-6 text-muted">Coba kata yang lebih pendek atau pindah kategori.</p></div>@endforelse</div>
+        <div class="mt-6">{{ $results->links() }}</div>
+    @endif
+</div>

@@ -12,6 +12,7 @@
             <x-brand />
             <nav aria-label="Navigasi akun" class="flex flex-wrap items-center gap-1 sm:gap-3">
                 <a href="{{ route('dashboard') }}" class="quiet-button text-muted">Beranda</a>
+                <a href="{{ route('search') }}" class="quiet-button {{ request()->routeIs('search') ? 'bg-orange/10' : 'text-muted' }}">Cari</a>
                 <a href="{{ route('feed') }}" class="quiet-button {{ request()->routeIs('feed') ? 'bg-orange/10' : 'text-muted' }}">Cerita</a>
                 <a href="{{ route('events') }}" class="quiet-button {{ request()->routeIs('events*') ? 'bg-orange/10' : 'text-muted' }}">Agenda</a>
                 <a href="{{ route('polls') }}" class="quiet-button {{ request()->routeIs('polls') ? 'bg-orange/10' : 'text-muted' }}">Polling</a>

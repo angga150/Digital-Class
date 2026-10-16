@@ -7,6 +7,7 @@ use App\Livewire\Agenda\Detail;
 use App\Livewire\Agenda\Index;
 use App\Livewire\Membership\EditProfile;
 use App\Livewire\Membership\MemberDirectory;
+use App\Livewire\Polling\Ballot;
 use App\Livewire\Stories\Feed;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -54,6 +55,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         Route::get('/events', Index::class)->name('events');
         Route::get('/events/{event}', Detail::class)->name('events.show');
         Route::get('/polls', App\Livewire\Polling\Index::class)->name('polls');
+        Route::get('/polls/{pollId}', Ballot::class)->whereNumber('pollId')->name('polls.show');
+        Route::get('/search', App\Livewire\Search\Index::class)->name('search');
         Route::get('/birthdays', App\Livewire\Birthdays\Index::class)->name('birthdays');
         Route::get('/announcements', App\Livewire\Announcements\Index::class)->name('announcements');
         Route::get('/announcements/{post}', App\Livewire\Announcements\Detail::class)->name('announcements.show');

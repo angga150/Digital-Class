@@ -13,7 +13,7 @@ Dashboard memakai halaman Livewire, komponen Blade di `src/resources/views/compo
 - [Polling](./polls.md) menampilkan polling aktif dan menyimpan satu suara per akun, dengan hasil agregat sesuai pengaturan akses. Link Semua polling membuka `/polls` untuk melihat arsip atau membuat polling sebagai pengurus.
 - [Ulang tahun](./birthdays.md) menampilkan teman pada hari perayaan terdekat dalam 30 hari, mengikuti privasi profil. Semua teman pada tanggal yang sama ditampilkan; kalender lengkap tersedia di `/birthdays`.
 - [Papan Pengumuman](./announcements.md) memakai post pengumuman asli. Banner memprioritaskan sematan lalu pengumuman terbaru dan membuka detail. Pengurus dapat mengelolanya melalui `/announcements`.
-- Album dan notifikasi masih memakai data contoh. Pencarian dashboard berupa pencarian shortcut/konten contoh, belum pencarian seluruh data; shortcut Agenda, Ulang tahun, dan Pengumuman membuka halaman masing-masing.
+- [Pencarian Kelas](./search.md) mencari data asli per kategori melalui header desktop dan tombol pencarian HP. [Simpan Cerita](./bookmarks.md) menyediakan daftar pribadi di feed. Album dan notifikasi masih memakai data contoh.
 - Dialog menggunakan elemen native `dialog` (focus trap, Escape), label form, status/error yang dapat dibaca pembaca layar, dan dukungan reduced motion.
 - Foto ilustrasi AI tersimpan lokal di `src/public/img/dashboard/campus-friends.png`; bukan foto anggota asli.
 

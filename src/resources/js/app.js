@@ -5,23 +5,9 @@ document.addEventListener('alpine:init', () => {
         modal: '',
         toast: '',
         toastTimer: null,
-        search: '',
-        searchOpen: false,
         notificationsRead: false,
         get modalTitle() {
             return { announcement: 'Kabar untuk kelas', birthdays: 'Kalender ulang tahun', event: 'Agenda kelas', memory: 'Selesai tugas, lanjut cerita.', notifications: 'Pemberitahuan', settings: 'Tentang dashboard ini' }[this.modal] || '';
-        },
-        get searchResults() {
-            const entries = [
-                { label: 'Cerita kelas · kabar terbaru dari teman', target: 'cerita' },
-                { label: 'Agenda · jadwal kegiatan kelas', modal: 'event' },
-                { label: 'Ulang tahun · kalender teman sekelas', modal: 'birthdays' },
-                { label: 'Teman kelas · cari anggota kelasmu', modal: 'members' },
-                { label: 'Kenangan · album kehidupan kampus', target: 'kenangan' },
-                { label: 'Pengumuman · papan kabar kelas', modal: 'announcement' },
-            ];
-            const query = this.search.trim().toLocaleLowerCase('id');
-            return query ? entries.filter(entry => entry.label.toLocaleLowerCase('id').includes(query)) : [];
         },
         openModal(name) {
             if (name === 'announcement') {
@@ -47,9 +33,6 @@ document.addEventListener('alpine:init', () => {
             }
             this.modal = name;
             if (name === 'notifications') this.notificationsRead = true;
-            this.searchOpen = false;
-            // Search results disappear before nextTick; resolve stable DOM targets
-            // here instead of relying on the removed result's Alpine $refs scope.
             const dialog = document.getElementById('dashboard-dialog');
             const focusId = 'dialog-title';
             this.$nextTick(() => {
@@ -64,15 +47,6 @@ document.addEventListener('alpine:init', () => {
             this.toastTimer = setTimeout(() => this.toast = '', 4500);
         },
         scrollBehavior() { return matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'; },
-        goToResult(result) {
-            this.searchOpen = false;
-            this.search = '';
-            if (result.modal) this.openModal(result.modal);
-            else {
-                this.active = result.target;
-                document.getElementById(result.target)?.scrollIntoView({ behavior: this.scrollBehavior() });
-            }
-        },
         destroy() { clearTimeout(this.toastTimer); },
     }));
 });

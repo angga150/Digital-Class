@@ -5,9 +5,13 @@ namespace App\Livewire\Polling;
 use App\Models\Poll;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
+#[Layout('layouts.member')]
+#[Title('Polling Kelas — Digital Class')]
 class Ballot extends Component
 {
     #[Locked]
